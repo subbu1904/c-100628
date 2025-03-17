@@ -53,9 +53,20 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     
     setIsListening(true);
     
-    // Set up speech recognition
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
+    // Set up speech recognition with proper type checking
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognitionAPI) {
+      toast({
+        title: "Voice Search Error",
+        description: "Failed to initialize speech recognition.",
+        variant: "destructive"
+      });
+      setIsListening(false);
+      return;
+    }
+    
+    const recognition = new SpeechRecognitionAPI();
     
     recognition.lang = 'en-US';
     recognition.continuous = false;
