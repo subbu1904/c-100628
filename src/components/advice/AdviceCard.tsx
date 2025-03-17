@@ -15,7 +15,7 @@ interface AdviceCardProps {
 }
 
 const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [showComments, setShowComments] = useState(false);
   const [comment, setComment] = useState('');
@@ -38,7 +38,7 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
   });
   
   const handleVote = (voteType: 'up' | 'down') => {
-    if (!isAuthenticated) {
+    if (!user.isAuthenticated) {
       setShowAuthDialog(true);
       return;
     }
@@ -46,7 +46,7 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
   };
   
   const handleComment = () => {
-    if (!isAuthenticated) {
+    if (!user.isAuthenticated) {
       setShowAuthDialog(true);
       return;
     }

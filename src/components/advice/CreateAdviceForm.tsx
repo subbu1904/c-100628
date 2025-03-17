@@ -19,7 +19,7 @@ const CreateAdviceForm: React.FC<CreateAdviceFormProps> = ({
   onAdviceCreated 
 }) => {
   const { toast } = useToast();
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const [content, setContent] = useState('');
   const [recommendation, setRecommendation] = useState<'buy' | 'sell' | 'hold'>('buy');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +28,7 @@ const CreateAdviceForm: React.FC<CreateAdviceFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isAuthenticated) {
+    if (!user.isAuthenticated) {
       setShowAuthDialog(true);
       return;
     }
