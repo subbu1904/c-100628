@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { AssetCategory } from '@/types/asset';
@@ -53,7 +52,7 @@ const AdminCategories: React.FC = () => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<AssetCategory | null>(null);
   
-  const isAdmin = user.role === 'admin'; // Check if user is an admin
+  const isAdmin = user.profile?.role === 'admin'; // Check if user is an admin
   
   useEffect(() => {
     const loadCategories = async () => {
@@ -146,7 +145,6 @@ const AdminCategories: React.FC = () => {
     }
   };
   
-  // If not admin, show access denied message
   if (!isAdmin) {
     return (
       <div className="min-h-screen bg-background">
@@ -303,7 +301,6 @@ const AdminCategories: React.FC = () => {
         )}
       </main>
       
-      {/* Edit Category Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="sm:max-w-[550px]">
           <DialogHeader>

@@ -2,7 +2,6 @@
 import React from 'react';
 import { Conversation } from '@/types/message';
 import { format } from 'date-fns';
-import { User } from '@/types/user';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface ConversationListProps {
@@ -57,7 +56,9 @@ const ConversationList: React.FC<ConversationListProps> = ({
     <div className="space-y-1">
       {conversations.map((conversation) => {
         // Find the other participant (not the current user)
-        const otherParticipantId = conversation.participantIds.find(id => id !== user.id);
+        const otherParticipantId = conversation.participantIds.find(
+          id => id !== (user.profile?.id || '')
+        );
         const otherUser = otherParticipantId ? getUserDetails(otherParticipantId) : { name: 'Unknown', initial: '?' };
         
         // Format the last message time

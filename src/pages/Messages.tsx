@@ -20,14 +20,14 @@ const Messages: React.FC = () => {
   
   useEffect(() => {
     const loadConversations = async () => {
-      if (!user.isAuthenticated) {
+      if (!user.isAuthenticated || !user.profile) {
         setIsLoading(false);
         return;
       }
       
       setIsLoading(true);
       try {
-        const fetchedConversations = await fetchConversations(user.id);
+        const fetchedConversations = await fetchConversations(user.profile.id);
         setConversations(fetchedConversations);
         
         // Select the first conversation if available and none is selected
@@ -42,7 +42,7 @@ const Messages: React.FC = () => {
     };
     
     loadConversations();
-  }, [user.isAuthenticated, user.id]);
+  }, [user.isAuthenticated, user.profile]);
   
   const handleSelectConversation = (conversationId: string) => {
     setSelectedConversationId(conversationId);
@@ -63,7 +63,7 @@ const Messages: React.FC = () => {
     conv => conv.id === selectedConversationId
   );
   const recipientId = selectedConversation?.participantIds.find(
-    id => id !== user.id
+    id => id !== (user.profile?.id || '')
   );
   
   // Handle mobile view with tabs

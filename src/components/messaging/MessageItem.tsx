@@ -10,7 +10,7 @@ interface MessageItemProps {
 
 const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   const { user } = useAuth();
-  const isSender = message.senderId === user.id;
+  const isSender = user.profile && message.senderId === user.profile.id;
   
   // Format the time
   const messageTime = new Date(message.timestamp).toLocaleTimeString([], {

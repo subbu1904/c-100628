@@ -27,7 +27,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ conversationId, recipient
         
         // Mark unread messages as read
         const unreadMessageIds = fetchedMessages
-          .filter(msg => !msg.read && msg.recipientId === user.id)
+          .filter(msg => !msg.read && msg.recipientId === (user.profile?.id || ''))
           .map(msg => msg.id);
           
         if (unreadMessageIds.length > 0) {
@@ -43,13 +43,15 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ conversationId, recipient
     if (conversationId) {
       loadMessages();
     }
-  }, [conversationId, user.id]);
+  }, [conversationId, user.profile?.id]);
   
   const handleSendMessage = async (content: string) => {
+    if (!user.profile) return;
+    
     setIsSending(true);
     try {
       const newMessage = await sendMessage({
-        senderId: user.id,
+        senderId: user.profile.id,
         recipientId,
         content,
       });
