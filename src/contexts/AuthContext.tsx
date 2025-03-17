@@ -1,45 +1,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { AuthUser, UserProfile } from "@/types/user";
-
-// Mock data for demo purposes - will be replaced with API calls
-const mockUsers: UserProfile[] = [
-  {
-    id: "1",
-    email: "admin@example.com",
-    name: "Admin User",
-    role: "admin",
-    createdAt: new Date().toISOString(),
-    membership: {
-      type: "premium",
-      startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(),
-      autoRenew: true
-    }
-  },
-  {
-    id: "2",
-    email: "user@example.com",
-    name: "Free User",
-    role: "free",
-    createdAt: new Date().toISOString(),
-    membership: {
-      type: "free"
-    }
-  }
-];
-
-interface AuthContextType {
-  user: AuthUser;
-  login: (email: string, password: string) => Promise<boolean>;
-  loginWithOtp: (email: string, otp: string) => Promise<boolean>;
-  loginWithSocial: (provider: "google" | "facebook") => Promise<boolean>;
-  register: (email: string, password: string, name: string) => Promise<boolean>;
-  logout: () => void;
-  sendOtp: (email: string) => Promise<boolean>;
-  upgradeToPermium: () => Promise<boolean>;
-  downgradeToFree: () => Promise<boolean>;
-}
+import { AuthUser } from "@/types/user";
+import { authService } from "@/services/authService";
+import { AuthContextType } from "./AuthContextTypes";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -52,42 +15,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Check for existing session on mount
   useEffect(() => {
-    // Simulate loading user from localStorage
-    const storedUser = localStorage.getItem("cryptoUser");
+    const storedUserProfile = authService.getUserFromStorage();
     
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser({
-          isAuthenticated: true,
-          profile: parsedUser,
-          loading: false
-        });
-      } catch (error) {
-        console.error("Failed to parse stored user:", error);
-        localStorage.removeItem("cryptoUser");
-        setUser({ isAuthenticated: false, profile: null, loading: false });
-      }
+    if (storedUserProfile) {
+      setUser({
+        isAuthenticated: true,
+        profile: storedUserProfile,
+        loading: false
+      });
     } else {
       setUser({ isAuthenticated: false, profile: null, loading: false });
     }
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Simulate API call
     try {
-      // Find user - in a real app, this would be a server request
-      const foundUser = mockUsers.find(u => u.email === email);
+      const userProfile = await authService.login(email, password);
       
-      if (foundUser) {
+      if (userProfile) {
         setUser({
           isAuthenticated: true,
-          profile: foundUser,
+          profile: userProfile,
           loading: false
         });
         
-        // Store in localStorage
-        localStorage.setItem("cryptoUser", JSON.stringify(foundUser));
+        authService.storeUser(userProfile);
         return true;
       }
       return false;
@@ -103,17 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     name: string
   ): Promise<boolean> => {
     try {
-      // In a real app, this would create a user in the database
-      const newUser: UserProfile = {
-        id: Date.now().toString(),
-        email,
-        name,
-        role: "free",
-        createdAt: new Date().toISOString(),
-        membership: {
-          type: "free"
-        }
-      };
+      const newUser = await authService.register(email, password, name);
       
       setUser({
         isAuthenticated: true,
@@ -121,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading: false
       });
       
-      localStorage.setItem("cryptoUser", JSON.stringify(newUser));
+      authService.storeUser(newUser);
       return true;
     } catch (error) {
       console.error("Registration failed:", error);
@@ -130,28 +72,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loginWithOtp = async (email: string, otp: string): Promise<boolean> => {
-    // Simulate OTP verification
     try {
-      // In a real app, this would verify the OTP with a server
-      if (otp === "123456") { // Mock OTP check
-        const foundUser = mockUsers.find(u => u.email === email) || {
-          id: Date.now().toString(),
-          email,
-          name: email.split("@")[0],
-          role: "free",
-          createdAt: new Date().toISOString(),
-          membership: {
-            type: "free"
-          }
-        };
-        
+      const userProfile = await authService.loginWithOtp(email, otp);
+      
+      if (userProfile) {
         setUser({
           isAuthenticated: true,
-          profile: foundUser,
+          profile: userProfile,
           loading: false
         });
         
-        localStorage.setItem("cryptoUser", JSON.stringify(foundUser));
+        authService.storeUser(userProfile);
         return true;
       }
       return false;
@@ -162,27 +93,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loginWithSocial = async (provider: "google" | "facebook"): Promise<boolean> => {
-    // Simulate social login
     try {
-      // In a real app, this would use OAuth
-      const mockSocialUser: UserProfile = {
-        id: Date.now().toString(),
-        email: `user_${Date.now()}@${provider}.com`,
-        name: `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
-        role: "free",
-        createdAt: new Date().toISOString(),
-        membership: {
-          type: "free"
-        }
-      };
+      const userProfile = await authService.loginWithSocial(provider);
       
       setUser({
         isAuthenticated: true,
-        profile: mockSocialUser,
+        profile: userProfile,
         loading: false
       });
       
-      localStorage.setItem("cryptoUser", JSON.stringify(mockSocialUser));
+      authService.storeUser(userProfile);
       return true;
     } catch (error) {
       console.error(`${provider} login failed:`, error);
@@ -196,37 +116,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       profile: null,
       loading: false
     });
-    localStorage.removeItem("cryptoUser");
+    authService.clearUser();
   };
 
   const sendOtp = async (email: string): Promise<boolean> => {
-    // Simulate sending OTP
-    console.log(`OTP sent to ${email}: 123456`);
-    return true;
+    return await authService.sendOtp(email);
   };
 
   const upgradeToPermium = async (): Promise<boolean> => {
     if (!user.profile) return false;
     
     try {
-      // In a real app, this would involve a payment process
-      const updatedProfile = {
-        ...user.profile,
-        role: "premium" as const,
-        membership: {
-          type: "premium" as const,
-          startDate: new Date().toISOString(),
-          endDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
-          autoRenew: true
-        }
-      };
+      const updatedProfile = await authService.upgradeToPermium(user.profile);
       
       setUser({
         ...user,
         profile: updatedProfile
       });
       
-      localStorage.setItem("cryptoUser", JSON.stringify(updatedProfile));
+      authService.storeUser(updatedProfile);
       return true;
     } catch (error) {
       console.error("Upgrade failed:", error);
@@ -238,20 +146,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user.profile) return false;
     
     try {
-      const updatedProfile = {
-        ...user.profile,
-        role: "free" as const,
-        membership: {
-          type: "free" as const
-        }
-      };
+      const updatedProfile = await authService.downgradeToFree(user.profile);
       
       setUser({
         ...user,
         profile: updatedProfile
       });
       
-      localStorage.setItem("cryptoUser", JSON.stringify(updatedProfile));
+      authService.storeUser(updatedProfile);
       return true;
     } catch (error) {
       console.error("Downgrade failed:", error);
