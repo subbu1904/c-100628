@@ -6,6 +6,7 @@ import { Asset, AssetHistory, fetchAsset, fetchAssetHistory, formatCurrency, for
 import Header from '../components/Header';
 import PriceChart from '../components/PriceChart';
 import Loader from '../components/Loader';
+import AdviceSection from '../components/advice/AdviceSection';
 
 type ChartInterval = 'd1' | 'h1' | 'm15' | 'm5' | 'm1';
 
@@ -206,6 +207,9 @@ const AssetDetail: React.FC = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Add the AdviceSection component */}
+            <AdviceSection assetId={id!} assetName={asset.name} />
           </>
         ) : null}
       </main>

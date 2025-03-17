@@ -21,3 +21,26 @@ export interface AuthUser {
   profile: UserProfile | null;
   loading: boolean;
 }
+
+export interface AdvicePost {
+  id: string;
+  assetId: string;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  recommendation: "buy" | "sell" | "hold";
+  content: string;
+  timestamp: string;
+  votes: {
+    upvotes: number;
+    downvotes: number;
+  };
+  userVote?: "up" | "down" | null;
+}
+
+export type AdviceSentiment = {
+  buy: number;
+  sell: number;
+  hold: number;
+  total: number;
+};
