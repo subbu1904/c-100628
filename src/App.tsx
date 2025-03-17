@@ -8,7 +8,9 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import AssetDetail from "./pages/AssetDetail";
 import Dashboard from "./pages/Dashboard";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
+import AdminCategories from "./pages/admin/Categories";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +32,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/asset/:id" element={<AssetDetail />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/admin/categories" element={<AdminCategories />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

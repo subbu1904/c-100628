@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdvicePost, AdviceSentiment } from '@/types/user';
 import CreateAdviceForm from './CreateAdviceForm';
-import AdviceCard from './AdviceCard';
+import SentimentDisplay from './SentimentDisplay';
+import AdviceList from './AdviceList';
 
 // Mock data for initial render
 const mockAdvice: AdvicePost[] = [
@@ -120,70 +119,12 @@ const AdviceSection: React.FC<AdviceSectionProps> = ({ assetId, assetName }) => 
     }, 500);
   };
   
-  const filteredAdvice = activeTab === 'all' 
-    ? advice 
-    : advice.filter(post => post.recommendation === activeTab);
-  
-  // Calculate sentiment percentages for the progress bars
-  const buyPercentage = sentiment.total > 0 ? (sentiment.buy / sentiment.total) * 100 : 0;
-  const sellPercentage = sentiment.total > 0 ? (sentiment.sell / sentiment.total) * 100 : 0;
-  const holdPercentage = sentiment.total > 0 ? (sentiment.hold / sentiment.total) * 100 : 0;
-  
   return (
     <div className="mb-8">
       <h2 className="section-title mb-6">Community Advice</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Community Sentiment</CardTitle>
-            <CardDescription>
-              Based on {sentiment.total} recommendation{sentiment.total !== 1 ? 's' : ''}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-green-600 font-medium">Buy</span>
-                  <span>{sentiment.buy} ({Math.round(buyPercentage)}%)</span>
-                </div>
-                <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-green-600 rounded-full" 
-                    style={{ width: `${buyPercentage}%` }}
-                  ></div>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-blue-600 font-medium">Hold</span>
-                  <span>{sentiment.hold} ({Math.round(holdPercentage)}%)</span>
-                </div>
-                <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-blue-600 rounded-full" 
-                    style={{ width: `${holdPercentage}%` }}
-                  ></div>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-red-600 font-medium">Sell</span>
-                  <span>{sentiment.sell} ({Math.round(sellPercentage)}%)</span>
-                </div>
-                <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-red-600 rounded-full" 
-                    style={{ width: `${sellPercentage}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <SentimentDisplay sentiment={sentiment} />
         
         <div className="md:col-span-2">
           <CreateAdviceForm 
@@ -203,26 +144,12 @@ const AdviceSection: React.FC<AdviceSectionProps> = ({ assetId, assetName }) => 
         </TabsList>
         
         <TabsContent value={activeTab} className="mt-0">
-          {isLoading ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
-          ) : filteredAdvice.length > 0 ? (
-            <div className="space-y-4">
-              {filteredAdvice.map(post => (
-                <AdviceCard 
-                  key={post.id} 
-                  advice={post} 
-                  onVote={handleVote} 
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 bg-muted/30 rounded-lg">
-              <p className="text-muted-foreground">No {activeTab !== 'all' ? activeTab : ''} advice yet</p>
-              <p className="text-sm">Be the first to share your thoughts!</p>
-            </div>
-          )}
+          <AdviceList 
+            advice={advice}
+            isLoading={isLoading}
+            activeTab={activeTab}
+            onVote={handleVote}
+          />
         </TabsContent>
       </Tabs>
     </div>
