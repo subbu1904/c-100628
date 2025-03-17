@@ -6,10 +6,17 @@ import AssetCard from '../components/AssetCard';
 import Loader from '../components/Loader';
 import Header from '../components/Header';
 import PopularRecommendations from '../components/PopularRecommendations';
+import SearchBar from '../components/SearchBar';
+import SuperCategorySelector from '../components/SuperCategorySelector';
+import { useIsMobile } from '@/hooks/use-mobile';
+import AnnouncementBanner from '@/components/AnnouncementBanner';
 
 const Index: React.FC = () => {
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
   const [limit, setLimit] = useState(20);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const isMobile = useIsMobile();
   
   const { 
     data: assets,
@@ -23,12 +30,37 @@ const Index: React.FC = () => {
   
   useEffect(() => {
     if (assets) {
-      setSelectedAssets(assets);
+      let filtered = [...assets];
+      
+      // Filter by search term
+      if (searchTerm) {
+        const term = searchTerm.toLowerCase();
+        filtered = filtered.filter(asset => 
+          asset.name.toLowerCase().includes(term) || 
+          asset.symbol.toLowerCase().includes(term)
+        );
+      }
+      
+      // Filter by super category (if not 'all')
+      if (selectedCategory !== 'all') {
+        // This would need API support for category filtering
+        // For now, just simulating with the mock data
+      }
+      
+      setSelectedAssets(filtered);
     }
-  }, [assets]);
+  }, [assets, searchTerm, selectedCategory]);
   
   const handleLoadMore = () => {
     setLimit(prevLimit => prevLimit + 20);
+  };
+  
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
+  
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
   };
   
   // Loading skeletons for assets
@@ -74,8 +106,10 @@ const Index: React.FC = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
+      <AnnouncementBanner />
+      
       <main className="page-container animate-slide-up">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <div>
             <span className="badge bg-primary/10 text-primary mb-2">Cryptocurrency</span>
             <h1 className="page-header">Market Overview</h1>
@@ -85,9 +119,15 @@ const Index: React.FC = () => {
           </div>
         </div>
         
-        {/* Popular Recommendations Section - Desktop */}
-        <div className="hidden lg:block mb-8">
-          <PopularRecommendations />
+        {/* Search and Category Selection */}
+        <div className="mb-6">
+          <SearchBar onSearch={handleSearch} />
+          <div className="mt-4">
+            <SuperCategorySelector 
+              selectedCategory={selectedCategory} 
+              onCategoryChange={handleCategoryChange} 
+            />
+          </div>
         </div>
         
         {isError && (
@@ -127,16 +167,9 @@ const Index: React.FC = () => {
             )}
           </div>
           
-          {/* Sidebar for Popular Recommendations - Tablet and Mobile */}
-          <div className="lg:hidden mt-8 mb-4">
+          {/* Popular Recommendations - Both Mobile and Desktop */}
+          <div className="lg:col-span-1 mb-6 lg:mb-0 order-first lg:order-last">
             <PopularRecommendations />
-          </div>
-          
-          {/* Sidebar for Desktop */}
-          <div className="hidden lg:block">
-            <div className="sticky top-24">
-              {/* Additional content can be added here */}
-            </div>
           </div>
         </div>
       </main>

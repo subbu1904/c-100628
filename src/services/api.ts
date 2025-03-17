@@ -1,5 +1,6 @@
-
 // API service for CoinCap
+import { rateLimiter } from './rateLimitService';
+
 const API_BASE_URL = 'https://api.coincap.io/v2';
 
 export interface Asset {
@@ -14,6 +15,7 @@ export interface Asset {
   priceUsd: string;
   changePercent24Hr: string;
   vwap24Hr: string;
+  followersCount?: number;
 }
 
 export interface AssetHistory {
@@ -25,6 +27,9 @@ export interface AssetHistory {
 // Fetch top assets
 export const fetchAssets = async (limit: number = 20): Promise<Asset[]> => {
   try {
+    // Check rate limit
+    await rateLimiter.checkEndpoint('fetchAssets', 'assets');
+    
     const response = await fetch(`${API_BASE_URL}/assets?limit=${limit}`);
     
     if (!response.ok) {
@@ -32,7 +37,12 @@ export const fetchAssets = async (limit: number = 20): Promise<Asset[]> => {
     }
     
     const data = await response.json();
-    return data.data as Asset[];
+    
+    // Add mock followers count
+    return data.data.map((asset: Asset) => ({
+      ...asset,
+      followersCount: Math.floor(Math.random() * 10000)
+    }));
   } catch (error) {
     console.error('Error fetching assets:', error);
     throw error;
@@ -42,6 +52,9 @@ export const fetchAssets = async (limit: number = 20): Promise<Asset[]> => {
 // Fetch single asset by id
 export const fetchAsset = async (id: string): Promise<Asset> => {
   try {
+    // Check rate limit
+    await rateLimiter.checkEndpoint(`fetchAsset:${id}`, 'assets');
+    
     const response = await fetch(`${API_BASE_URL}/assets/${id}`);
     
     if (!response.ok) {
@@ -49,7 +62,12 @@ export const fetchAsset = async (id: string): Promise<Asset> => {
     }
     
     const data = await response.json();
-    return data.data as Asset;
+    
+    // Add mock followers count
+    return {
+      ...data.data,
+      followersCount: Math.floor(Math.random() * 10000)
+    };
   } catch (error) {
     console.error(`Error fetching asset ${id}:`, error);
     throw error;
@@ -62,6 +80,9 @@ export const fetchAssetHistory = async (
   interval: string = 'd1'
 ): Promise<AssetHistory[]> => {
   try {
+    // Check rate limit
+    await rateLimiter.checkEndpoint(`fetchAssetHistory:${id}`, 'assets');
+    
     const response = await fetch(`${API_BASE_URL}/assets/${id}/history?interval=${interval}`);
     
     if (!response.ok) {
@@ -105,4 +126,31 @@ export const formatPercentChange = (value: string | number): string => {
 export const getChangeColorClass = (change: string | number): string => {
   const numValue = typeof change === 'string' ? parseFloat(change) : change;
   return numValue >= 0 ? 'text-green-500' : 'text-red-500';
+};
+
+// Followers actions
+export const followAsset = async (assetId: string, userId: string): Promise<void> => {
+  try {
+    await rateLimiter.checkEndpoint(`followAsset:${assetId}`, 'assets');
+    
+    // In a real app, this would be an API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log(`User ${userId} followed asset ${assetId}`);
+  } catch (error) {
+    console.error(`Error following asset ${assetId}:`, error);
+    throw error;
+  }
+};
+
+export const unfollowAsset = async (assetId: string, userId: string): Promise<void> => {
+  try {
+    await rateLimiter.checkEndpoint(`unfollowAsset:${assetId}`, 'assets');
+    
+    // In a real app, this would be an API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log(`User ${userId} unfollowed asset ${assetId}`);
+  } catch (error) {
+    console.error(`Error unfollowing asset ${assetId}:`, error);
+    throw error;
+  }
 };
