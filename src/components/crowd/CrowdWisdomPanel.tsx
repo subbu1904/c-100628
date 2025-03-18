@@ -94,7 +94,7 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                     <span className="text-green-600 font-medium">{t('recommendations.buy')}</span>
                     <span>{consensusData.buyPercentage}%</span>
                   </div>
-                  <Progress value={consensusData.buyPercentage} className="h-2 bg-secondary" indicatorClassName="bg-green-600" />
+                  <Progress value={consensusData.buyPercentage} className="h-2 bg-green-600" />
                 </div>
                 
                 <div className="space-y-1">
@@ -102,7 +102,7 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                     <span className="text-blue-600 font-medium">{t('recommendations.hold')}</span>
                     <span>{consensusData.holdPercentage}%</span>
                   </div>
-                  <Progress value={consensusData.holdPercentage} className="h-2 bg-secondary" indicatorClassName="bg-blue-600" />
+                  <Progress value={consensusData.holdPercentage} className="h-2 bg-blue-600" />
                 </div>
                 
                 <div className="space-y-1">
@@ -110,7 +110,7 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                     <span className="text-red-600 font-medium">{t('recommendations.sell')}</span>
                     <span>{consensusData.sellPercentage}%</span>
                   </div>
-                  <Progress value={consensusData.sellPercentage} className="h-2 bg-secondary" indicatorClassName="bg-red-600" />
+                  <Progress value={consensusData.sellPercentage} className="h-2 bg-red-600" />
                 </div>
               </div>
             </div>
@@ -167,8 +167,7 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                 </div>
                 <Progress 
                   value={consensusData.riskAssessment.volatilityIndex} 
-                  className="h-2.5 bg-secondary" 
-                  indicatorClassName={cn(
+                  className={cn("h-2.5", 
                     consensusData.riskAssessment.volatilityIndex > 66 ? "bg-red-500" :
                     consensusData.riskAssessment.volatilityIndex > 33 ? "bg-yellow-500" :
                     "bg-green-500"
@@ -183,8 +182,7 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                 </div>
                 <Progress 
                   value={consensusData.consensusStrength} 
-                  className="h-2.5 bg-secondary" 
-                  indicatorClassName="bg-blue-500"
+                  className="h-2.5 bg-blue-500"
                 />
               </div>
               
@@ -195,8 +193,7 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                 </div>
                 <Progress 
                   value={consensusData.riskAssessment.confidenceScore} 
-                  className="h-2.5 bg-secondary" 
-                  indicatorClassName="bg-purple-500" 
+                  className="h-2.5 bg-purple-500"
                 />
               </div>
             </div>

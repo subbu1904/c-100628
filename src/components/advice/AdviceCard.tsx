@@ -9,13 +9,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import AuthDialog from '../auth/AuthDialog';
 import UserRankBadge from '../gamification/UserRankBadge';
-import { Badge } from '@/types/gamification';
+import { Badge as BadgeType } from '@/types/gamification';
+import { Badge } from "@/components/ui/badge";
 import UserBadges from '../gamification/UserBadges';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
 // Mock badges for demonstration
-const mockBadges: Badge[] = [
+const mockBadges: BadgeType[] = [
   {
     id: '1',
     name: 'Market Guru',
@@ -256,12 +258,11 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
                 </div>
                 <Progress 
                   value={advice.riskAssessment.volatilityIndex} 
-                  className="h-1.5" 
-                  indicatorClassName={
+                  className={cn("h-1.5", 
                     advice.riskAssessment.volatilityIndex > 66 ? "bg-red-500" :
                     advice.riskAssessment.volatilityIndex > 33 ? "bg-yellow-500" :
                     "bg-green-500"
-                  }
+                  )}
                 />
               </div>
               <div>
@@ -271,8 +272,7 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
                 </div>
                 <Progress 
                   value={advice.riskAssessment.communityConsensus} 
-                  className="h-1.5" 
-                  indicatorClassName="bg-blue-500"
+                  className="h-1.5 bg-blue-500"
                 />
               </div>
             </div>
