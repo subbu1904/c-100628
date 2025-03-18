@@ -2,7 +2,7 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import i18n from 'i18next';
 import { initReactI18next, useTranslation } from 'react-i18next';
-import { detectUserLocation } from '@/services/geoLocationService';
+import { detectUserLocation, getLanguageFromCountry, getUserCountry } from '@/services/geoLocationService';
 
 // Import all translation resources
 import enTranslation from '@/locales/en.json';
@@ -33,6 +33,7 @@ interface LanguageContextType {
   setLanguage: (lang: string) => void;
   detectedCountry: string;
   countryCode: string;
+  setCountry: (countryCode: string) => void;
   t: (key: string, options?: any) => string; // Translation function
 }
 
@@ -48,16 +49,39 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const [countryCode, setCountryCode] = useState('');
   const { t } = useTranslation();
 
+  // Set country and potentially update language
+  const setCountry = (code: string) => {
+    setCountryCode(code);
+    
+    // Optionally update language based on country
+    const suggestedLanguage = getLanguageFromCountry(code);
+    if (suggestedLanguage) {
+      setLanguage(suggestedLanguage);
+    }
+  };
+
   useEffect(() => {
     const detectLocation = async () => {
       try {
-        const location = await detectUserLocation();
-        setDetectedCountry(location.country);
-        setCountryCode(location.countryCode);
+        // Check if user has a saved country preference
+        const savedCountry = getUserCountry();
         
-        // Auto-set language based on country if we have a good match
-        if (location.suggestedLanguage) {
-          setLanguage(location.suggestedLanguage);
+        if (savedCountry) {
+          setCountryCode(savedCountry);
+          const suggestedLanguage = getLanguageFromCountry(savedCountry);
+          if (suggestedLanguage) {
+            setLanguage(suggestedLanguage);
+          }
+        } else {
+          // If no saved preference, detect location
+          const location = await detectUserLocation();
+          setDetectedCountry(location.country);
+          setCountryCode(location.countryCode);
+          
+          // Auto-set language based on country if we have a good match
+          if (location.suggestedLanguage) {
+            setLanguage(location.suggestedLanguage);
+          }
         }
       } catch (error) {
         console.error('Failed to detect location:', error);
@@ -89,6 +113,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       setLanguage, 
       detectedCountry, 
       countryCode, 
+      setCountry,
       t 
     }}>
       {children}

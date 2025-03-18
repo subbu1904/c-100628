@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AdvicePost } from '@/types/user';
 import { useAuth } from '@/contexts/AuthContext';
-import { ThumbsUp, ThumbsDown, MessageCircle } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MessageCircle, CheckCircle, AlertCircle, XCircle, Award, BarChart2, Shield } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import AuthDialog from '../auth/AuthDialog';
@@ -12,6 +12,7 @@ import UserRankBadge from '../gamification/UserRankBadge';
 import { Badge } from '@/types/gamification';
 import UserBadges from '../gamification/UserBadges';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Progress } from "@/components/ui/progress";
 
 // Mock badges for demonstration
 const mockBadges: Badge[] = [
@@ -32,6 +33,15 @@ const mockBadges: Badge[] = [
     unlocked: true,
     category: 'contribution',
     level: 2
+  },
+  {
+    id: '3',
+    name: 'Verified Expert',
+    description: 'Recognized financial expert',
+    icon: 'shield',
+    unlocked: true,
+    category: 'expert',
+    level: 3
   }
 ];
 
@@ -94,9 +104,40 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
     setComment('');
   };
   
+  // Get verification status badge
+  const getVerificationBadge = () => {
+    if (!advice.verificationStatus) return null;
+    
+    switch (advice.verificationStatus) {
+      case 'verified':
+        return (
+          <Badge variant="outline" className="flex items-center gap-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800">
+            <CheckCircle className="h-3 w-3" />
+            {t('verification.verified')}
+          </Badge>
+        );
+      case 'incorrect':
+        return (
+          <Badge variant="outline" className="flex items-center gap-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 border-red-200 dark:border-red-800">
+            <XCircle className="h-3 w-3" />
+            {t('verification.incorrect')}
+          </Badge>
+        );
+      case 'pending':
+        return (
+          <Badge variant="outline" className="flex items-center gap-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800">
+            <AlertCircle className="h-3 w-3" />
+            {t('verification.pending')}
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+  
   return (
     <>
-      <Card className="p-4 mb-4 border-2 border-secondary hover:border-primary transition-all">
+      <Card className={`p-4 mb-4 border-2 ${advice.verificationStatus === 'verified' ? 'border-green-300' : advice.verificationStatus === 'incorrect' ? 'border-red-300' : 'border-secondary'} hover:border-primary transition-all`}>
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center">
             <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary font-semibold mr-3">
@@ -105,6 +146,12 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
             <div>
               <div className="flex items-center">
                 <p className="font-medium mr-2">{advice.userName}</p>
+                {advice.userIsExpert && (
+                  <Badge variant="secondary" className="mr-2 flex items-center gap-1">
+                    <Award className="h-3 w-3" />
+                    {t('expert.verified')}
+                  </Badge>
+                )}
                 {advice.userRank && (
                   <UserRankBadge 
                     user={{ 
@@ -133,12 +180,104 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
               </div>
             </div>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${recommendationColors[advice.recommendation]}`}>
-            {t(`recommendations.${advice.recommendation}`).toUpperCase()}
-          </span>
+          <div className="flex items-center gap-2">
+            {getVerificationBadge()}
+            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${recommendationColors[advice.recommendation]}`}>
+              {t(`recommendations.${advice.recommendation}`).toUpperCase()}
+            </span>
+          </div>
         </div>
         
         <p className="mb-4">{advice.content}</p>
+        
+        {advice.predictionOutcome && (
+          <div className="mb-4 p-3 rounded-md border bg-secondary/20">
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-sm font-medium">{t('verification.predictionOutcome')}</h4>
+              <Badge 
+                variant={advice.predictionOutcome.result === 'correct' ? 'default' : 'destructive'}
+                className="flex items-center gap-1"
+              >
+                {advice.predictionOutcome.result === 'correct' 
+                  ? <CheckCircle className="h-3 w-3" /> 
+                  : <XCircle className="h-3 w-3" />}
+                {t(`verification.${advice.predictionOutcome.result}`)}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <span className="text-muted-foreground">{t('verification.expectedDirection')}:</span>
+              <span className={
+                advice.predictionOutcome.expectedDirection === 'up' 
+                  ? 'text-green-600' 
+                  : advice.predictionOutcome.expectedDirection === 'down'
+                  ? 'text-red-600'
+                  : 'text-blue-600'
+              }>
+                {t(`verification.direction.${advice.predictionOutcome.expectedDirection}`)}
+              </span>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <span className="text-muted-foreground">{t('verification.actualDirection')}:</span>
+              <span className={
+                advice.predictionOutcome.actualDirection === 'up' 
+                  ? 'text-green-600' 
+                  : advice.predictionOutcome.actualDirection === 'down'
+                  ? 'text-red-600'
+                  : 'text-blue-600'
+              }>
+                {t(`verification.direction.${advice.predictionOutcome.actualDirection}`)}
+                {advice.predictionOutcome.actualChange !== undefined && 
+                  ` (${advice.predictionOutcome.actualChange > 0 ? '+' : ''}${advice.predictionOutcome.actualChange}%)`}
+              </span>
+            </div>
+          </div>
+        )}
+        
+        {advice.riskAssessment && (
+          <div className="mb-4 p-3 rounded-md border bg-secondary/20">
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-sm font-medium">{t('crowdWisdom.riskAssessment')}</h4>
+              <Badge 
+                variant={
+                  advice.riskAssessment.level === 'low' ? 'success' :
+                  advice.riskAssessment.level === 'medium' ? 'default' :
+                  advice.riskAssessment.level === 'high' ? 'warning' : 'destructive'
+                }
+                className="capitalize"
+              >
+                {t(`crowdWisdom.riskLevel.${advice.riskAssessment.level}`)}
+              </Badge>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-muted-foreground">{t('crowdWisdom.volatilityIndex')}</span>
+                  <span>{advice.riskAssessment.volatilityIndex}/100</span>
+                </div>
+                <Progress 
+                  value={advice.riskAssessment.volatilityIndex} 
+                  className="h-1.5" 
+                  indicatorClassName={
+                    advice.riskAssessment.volatilityIndex > 66 ? "bg-red-500" :
+                    advice.riskAssessment.volatilityIndex > 33 ? "bg-yellow-500" :
+                    "bg-green-500"
+                  }
+                />
+              </div>
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-muted-foreground">{t('crowdWisdom.consensusStrength')}</span>
+                  <span>{advice.riskAssessment.communityConsensus}/100</span>
+                </div>
+                <Progress 
+                  value={advice.riskAssessment.communityConsensus} 
+                  className="h-1.5" 
+                  indicatorClassName="bg-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">

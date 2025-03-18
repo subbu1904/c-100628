@@ -27,6 +27,25 @@ const countryToLanguageMap: Record<string, string> = {
   'US': 'en', 'GB': 'en', 'AU': 'en'
 };
 
+// Full list of countries for the country selector
+export const countries: { code: string; name: string }[] = [
+  { code: 'US', name: 'United States' },
+  { code: 'GB', name: 'United Kingdom' },
+  { code: 'IN', name: 'India' },
+  { code: 'ES', name: 'Spain' },
+  { code: 'MX', name: 'Mexico' },
+  { code: 'AR', name: 'Argentina' },
+  { code: 'FR', name: 'France' },
+  { code: 'CA', name: 'Canada' },
+  { code: 'AU', name: 'Australia' },
+  { code: 'DE', name: 'Germany' },
+  { code: 'JP', name: 'Japan' },
+  { code: 'BR', name: 'Brazil' },
+  { code: 'CN', name: 'China' },
+  { code: 'RU', name: 'Russia' },
+  { code: 'ZA', name: 'South Africa' }
+];
+
 // Countries for demo display purposes
 const countryNames: Record<string, string> = {
   'US': 'United States',
@@ -75,4 +94,14 @@ export const getCountryName = (countryCode: string): string => {
 
 export const getLanguageFromCountry = (countryCode: string): string => {
   return countryToLanguageMap[countryCode] || 'en';
+};
+
+// Save user's country preference
+export const saveUserCountry = (countryCode: string): void => {
+  localStorage.setItem('userCountry', countryCode);
+};
+
+// Get user's saved country preference
+export const getUserCountry = (): string | null => {
+  return localStorage.getItem('userCountry');
 };

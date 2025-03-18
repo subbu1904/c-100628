@@ -2,6 +2,7 @@
 import React from 'react';
 import { AdvicePost } from '@/types/user';
 import AdviceCard from './AdviceCard';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AdviceListProps {
   advice: AdvicePost[];
@@ -11,9 +12,17 @@ interface AdviceListProps {
 }
 
 const AdviceList: React.FC<AdviceListProps> = ({ advice, isLoading, activeTab, onVote }) => {
-  const filteredAdvice = activeTab === 'all' 
-    ? advice 
-    : advice.filter(post => post.recommendation === activeTab);
+  const { t } = useLanguage();
+  
+  const filteredAdvice = React.useMemo(() => {
+    if (activeTab === 'all') {
+      return advice;
+    } else if (activeTab === 'verified') {
+      return advice.filter(post => post.verificationStatus === 'verified');
+    } else {
+      return advice.filter(post => post.recommendation === activeTab);
+    }
+  }, [advice, activeTab]);
     
   if (isLoading) {
     return (
@@ -26,8 +35,14 @@ const AdviceList: React.FC<AdviceListProps> = ({ advice, isLoading, activeTab, o
   if (filteredAdvice.length === 0) {
     return (
       <div className="text-center py-8 bg-muted/30 rounded-lg">
-        <p className="text-muted-foreground">No {activeTab !== 'all' ? activeTab : ''} advice yet</p>
-        <p className="text-sm">Be the first to share your thoughts!</p>
+        <p className="text-muted-foreground">
+          {activeTab === 'verified' 
+            ? t('verification.noVerifiedAdvice')
+            : activeTab !== 'all' 
+              ? t('advice.noAdviceType', { type: t(`recommendations.${activeTab}`) }) 
+              : t('advice.noAdviceYet')}
+        </p>
+        <p className="text-sm">{t('advice.beFirstToShare')}</p>
       </div>
     );
   }

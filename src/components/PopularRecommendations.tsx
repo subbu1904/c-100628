@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ThumbsUp, ThumbsDown, Pause, TrendingUp, MessageSquare } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Pause, TrendingUp, MessageSquare, CheckCircle, Award } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -18,6 +18,8 @@ const mockPopularRecommendations = [
     content: 'Strong buy signal on Bitcoin with institutional adoption accelerating.',
     userName: 'CryptoExpert',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(), // 3 hours ago
+    verified: true,
+    expertPost: true
   },
   {
     id: '2',
@@ -29,6 +31,7 @@ const mockPopularRecommendations = [
     content: 'ETH 2.0 progress is promising. Accumulate before the next major upgrade.',
     userName: 'BlockchainDev',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), // 5 hours ago
+    verified: true
   },
   {
     id: '3',
@@ -40,6 +43,7 @@ const mockPopularRecommendations = [
     content: 'Hold position through market volatility. Long-term prospects remain strong.',
     userName: 'TechTrader',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(), // 8 hours ago
+    verified: false
   },
   {
     id: '4',
@@ -51,6 +55,8 @@ const mockPopularRecommendations = [
     content: 'ADA showing strength after recent upgrades. Good entry point now.',
     userName: 'CryptoAnalyst',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(), // 12 hours ago
+    expertPost: true,
+    verified: true
   },
   {
     id: '5',
@@ -62,6 +68,7 @@ const mockPopularRecommendations = [
     content: 'Take profits on DOGE rally, potential pullback coming soon.',
     userName: 'MemeInvestor',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(), // 6 hours ago
+    verified: false
   }
 ];
 
@@ -136,16 +143,32 @@ const PopularRecommendations: React.FC = () => {
                   <div className={`w-2 h-2 rounded-full ${getRecommendationColor(rec.recommendation)}`}></div>
                   {rec.assetName} ({rec.assetSymbol})
                 </Link>
-                <Badge variant={rec.recommendation === 'buy' ? 'default' : rec.recommendation === 'sell' ? 'destructive' : 'secondary'} className="text-xs capitalize">
-                  {getRecommendationIcon(rec.recommendation)}
-                  <span className="ml-1">{t(`recommendations.${rec.recommendation}`)}</span>
-                </Badge>
+                <div className="flex items-center gap-1">
+                  {rec.verified && (
+                    <Badge variant="outline" className="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 flex items-center gap-0.5">
+                      <CheckCircle className="h-2.5 w-2.5" />
+                      <span className="text-[10px]">{t('verification.verified')}</span>
+                    </Badge>
+                  )}
+                  <Badge variant={rec.recommendation === 'buy' ? 'default' : rec.recommendation === 'sell' ? 'destructive' : 'secondary'} className="text-xs capitalize ml-1">
+                    {getRecommendationIcon(rec.recommendation)}
+                    <span className="ml-1">{t(`recommendations.${rec.recommendation}`)}</span>
+                  </Badge>
+                </div>
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2 mb-1">
                 "{rec.content}"
               </p>
               <div className="flex justify-between items-center text-xs text-muted-foreground">
-                <span>{rec.userName}</span>
+                <div className="flex items-center">
+                  <span>{rec.userName}</span>
+                  {rec.expertPost && (
+                    <Badge variant="secondary" className="ml-1 text-[10px] h-4 flex items-center gap-1 py-0">
+                      <Award className="h-2 w-2" />
+                      {t('expert.short')}
+                    </Badge>
+                  )}
+                </div>
                 <div className="flex items-center gap-3">
                   <span className="flex items-center">
                     <ThumbsUp className="w-3 h-3 mr-1" />
