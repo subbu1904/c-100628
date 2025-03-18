@@ -241,11 +241,17 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
               <h4 className="text-sm font-medium">{t('crowdWisdom.riskAssessment')}</h4>
               <Badge 
                 variant={
-                  advice.riskAssessment.level === 'low' ? 'success' :
-                  advice.riskAssessment.level === 'medium' ? 'default' :
-                  advice.riskAssessment.level === 'high' ? 'warning' : 'destructive'
+                  advice.riskAssessment.level === 'low' ? 'default' :
+                  advice.riskAssessment.level === 'medium' ? 'secondary' :
+                  advice.riskAssessment.level === 'high' ? 'outline' : 'destructive'
                 }
-                className="capitalize"
+                className={cn(
+                  "capitalize",
+                  advice.riskAssessment.level === 'low' && "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+                  advice.riskAssessment.level === 'medium' && "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+                  advice.riskAssessment.level === 'high' && "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
+                  advice.riskAssessment.level === 'very-high' && "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+                )}
               >
                 {t(`crowdWisdom.riskLevel.${advice.riskAssessment.level}`)}
               </Badge>
@@ -256,24 +262,33 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
                   <span className="text-muted-foreground">{t('crowdWisdom.volatilityIndex')}</span>
                   <span>{advice.riskAssessment.volatilityIndex}/100</span>
                 </div>
-                <Progress 
-                  value={advice.riskAssessment.volatilityIndex} 
-                  className={cn("h-1.5", 
-                    advice.riskAssessment.volatilityIndex > 66 ? "bg-red-500" :
-                    advice.riskAssessment.volatilityIndex > 33 ? "bg-yellow-500" :
-                    "bg-green-500"
-                  )}
-                />
+                <div className={cn(
+                  "relative w-full overflow-hidden rounded-full bg-secondary h-1.5",
+                  advice.riskAssessment.volatilityIndex > 66 ? "bg-red-200 dark:bg-red-800" :
+                  advice.riskAssessment.volatilityIndex > 33 ? "bg-yellow-200 dark:bg-yellow-800" :
+                  "bg-green-200 dark:bg-green-800"
+                )}>
+                  <Progress 
+                    value={advice.riskAssessment.volatilityIndex} 
+                    className={cn(
+                      advice.riskAssessment.volatilityIndex > 66 ? "bg-red-500" :
+                      advice.riskAssessment.volatilityIndex > 33 ? "bg-yellow-500" :
+                      "bg-green-500"
+                    )}
+                  />
+                </div>
               </div>
               <div>
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-muted-foreground">{t('crowdWisdom.consensusStrength')}</span>
                   <span>{advice.riskAssessment.communityConsensus}/100</span>
                 </div>
-                <Progress 
-                  value={advice.riskAssessment.communityConsensus} 
-                  className="h-1.5 bg-blue-500"
-                />
+                <div className="relative w-full overflow-hidden rounded-full bg-blue-200 dark:bg-blue-800 h-1.5">
+                  <Progress 
+                    value={advice.riskAssessment.communityConsensus}
+                    className="bg-blue-500"
+                  />
+                </div>
               </div>
             </div>
           </div>

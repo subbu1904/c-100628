@@ -94,7 +94,9 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                     <span className="text-green-600 font-medium">{t('recommendations.buy')}</span>
                     <span>{consensusData.buyPercentage}%</span>
                   </div>
-                  <Progress value={consensusData.buyPercentage} className="h-2 bg-green-600" />
+                  <div className="relative w-full overflow-hidden rounded-full bg-green-200 dark:bg-green-800 h-2">
+                    <Progress value={consensusData.buyPercentage} className="bg-green-600" />
+                  </div>
                 </div>
                 
                 <div className="space-y-1">
@@ -102,7 +104,9 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                     <span className="text-blue-600 font-medium">{t('recommendations.hold')}</span>
                     <span>{consensusData.holdPercentage}%</span>
                   </div>
-                  <Progress value={consensusData.holdPercentage} className="h-2 bg-blue-600" />
+                  <div className="relative w-full overflow-hidden rounded-full bg-blue-200 dark:bg-blue-800 h-2">
+                    <Progress value={consensusData.holdPercentage} className="bg-blue-600" />
+                  </div>
                 </div>
                 
                 <div className="space-y-1">
@@ -110,7 +114,9 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                     <span className="text-red-600 font-medium">{t('recommendations.sell')}</span>
                     <span>{consensusData.sellPercentage}%</span>
                   </div>
-                  <Progress value={consensusData.sellPercentage} className="h-2 bg-red-600" />
+                  <div className="relative w-full overflow-hidden rounded-full bg-red-200 dark:bg-red-800 h-2">
+                    <Progress value={consensusData.sellPercentage} className="bg-red-600" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -151,7 +157,10 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
         <CardContent>
           <div className="space-y-4">
             <div className="flex justify-between items-center mb-3">
-              <Badge className={cn("capitalize", getRiskBadgeColor(consensusData.riskAssessment.riskLevel))}>
+              <Badge 
+                variant="secondary" 
+                className={cn("capitalize", getRiskBadgeColor(consensusData.riskAssessment.riskLevel))}
+              >
                 {t(`crowdWisdom.riskLevel.${consensusData.riskAssessment.riskLevel}`)}
               </Badge>
               <span className="text-sm text-muted-foreground">
@@ -165,14 +174,21 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                   <span className="font-medium">{t('crowdWisdom.volatilityIndex')}</span>
                   <span>{consensusData.riskAssessment.volatilityIndex}/100</span>
                 </div>
-                <Progress 
-                  value={consensusData.riskAssessment.volatilityIndex} 
-                  className={cn("h-2.5", 
-                    consensusData.riskAssessment.volatilityIndex > 66 ? "bg-red-500" :
-                    consensusData.riskAssessment.volatilityIndex > 33 ? "bg-yellow-500" :
-                    "bg-green-500"
-                  )}
-                />
+                <div className={cn(
+                  "relative w-full overflow-hidden rounded-full h-2.5",
+                  consensusData.riskAssessment.volatilityIndex > 66 ? "bg-red-200 dark:bg-red-800" :
+                  consensusData.riskAssessment.volatilityIndex > 33 ? "bg-yellow-200 dark:bg-yellow-800" :
+                  "bg-green-200 dark:bg-green-800"
+                )}>
+                  <Progress 
+                    value={consensusData.riskAssessment.volatilityIndex} 
+                    className={cn(
+                      consensusData.riskAssessment.volatilityIndex > 66 ? "bg-red-500" :
+                      consensusData.riskAssessment.volatilityIndex > 33 ? "bg-yellow-500" :
+                      "bg-green-500"
+                    )}
+                  />
+                </div>
               </div>
               
               <div>
@@ -180,10 +196,12 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                   <span className="font-medium">{t('crowdWisdom.consensusStrength')}</span>
                   <span>{consensusData.consensusStrength}/100</span>
                 </div>
-                <Progress 
-                  value={consensusData.consensusStrength} 
-                  className="h-2.5 bg-blue-500"
-                />
+                <div className="relative w-full overflow-hidden rounded-full bg-blue-200 dark:bg-blue-800 h-2.5">
+                  <Progress 
+                    value={consensusData.consensusStrength}
+                    className="bg-blue-500"
+                  />
+                </div>
               </div>
               
               <div>
@@ -191,10 +209,12 @@ const CrowdWisdomPanel: React.FC<CrowdWisdomPanelProps> = ({
                   <span className="font-medium">{t('crowdWisdom.confidenceScore')}</span>
                   <span>{consensusData.riskAssessment.confidenceScore}/100</span>
                 </div>
-                <Progress 
-                  value={consensusData.riskAssessment.confidenceScore} 
-                  className="h-2.5 bg-purple-500"
-                />
+                <div className="relative w-full overflow-hidden rounded-full bg-purple-200 dark:bg-purple-800 h-2.5">
+                  <Progress 
+                    value={consensusData.riskAssessment.confidenceScore}
+                    className="bg-purple-500"
+                  />
+                </div>
               </div>
             </div>
             
