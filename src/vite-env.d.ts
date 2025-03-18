@@ -56,6 +56,16 @@ interface SpeechRecognitionStatic {
   prototype: SpeechRecognition;
 }
 
+// Extended ServiceWorkerRegistration to include Background Sync API
+interface SyncManager {
+  register(tag: string): Promise<void>;
+  getTags(): Promise<string[]>;
+}
+
+interface ServiceWorkerRegistration {
+  sync?: SyncManager;
+}
+
 interface Window {
   SpeechRecognition?: SpeechRecognitionStatic;
   webkitSpeechRecognition?: SpeechRecognitionStatic;

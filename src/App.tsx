@@ -70,9 +70,14 @@ const setupBackgroundSync = async () => {
     try {
       const registration = await navigator.serviceWorker.ready;
       
-      // Register sync event
-      registration.sync.register('sync-favorites');
-      console.log('Background sync registered');
+      // Check if sync is available on this registration
+      if ('sync' in registration) {
+        // Register sync event
+        (registration as any).sync.register('sync-favorites');
+        console.log('Background sync registered');
+      } else {
+        console.log('Background Sync API not available in this browser');
+      }
     } catch (error) {
       console.error('Background sync registration failed:', error);
     }
