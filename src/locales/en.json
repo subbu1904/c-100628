@@ -41,5 +41,46 @@
   "geo": {
     "usingLocation": "Using content for {{country}}",
     "changeLanguage": "Change Language"
+  },
+  "gamification": {
+    "leaderboard": "Leaderboard",
+    "rankings": "Rankings",
+    "rank": "Rank",
+    "user": "User",
+    "points": "Points",
+    "successRate": "Success Rate",
+    "followers": "Followers",
+    "badges": "Badges",
+    "moreBadges": "{{count}} more",
+    "yourProgress": "Your Progress",
+    "loginToTrack": "Login to track your progress",
+    "viewProfile": "View Profile",
+    "topPerformers": "Top Performers",
+    "viewFullLeaderboard": "View Full Leaderboard",
+    "currentLevel": "Current Level",
+    "levelProgress": "Level Progress",
+    "maxLevelReached": "You've reached the maximum level!",
+    "comments": "Comments",
+    "commentsComingSoon": "Comments coming soon!",
+    "addComment": "Add a comment...",
+    "post": "Post",
+    "categories": {
+      "predictions": "Predictions",
+      "followers": "Followers",
+      "contributions": "Contributions"
+    },
+    "periods": {
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "allTime": "All Time"
+    },
+    "badges": {
+      "all": "All Badges",
+      "prediction": "Prediction",
+      "social": "Social",
+      "contribution": "Contribution",
+      "achievement": "Achievement",
+      "unlocked": "Unlocked"
+    }
   }
 }

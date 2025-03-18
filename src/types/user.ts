@@ -14,6 +14,15 @@ export interface UserProfile {
     endDate?: string;
     autoRenew?: boolean;
   };
+  followers?: number;
+  following?: number;
+  points?: number;
+  successRate?: number;
+  rank?: {
+    level: number;
+    title: string;
+  };
+  badgeCount?: number;
 }
 
 export interface AuthUser {
@@ -36,6 +45,11 @@ export interface AdvicePost {
     downvotes: number;
   };
   userVote?: "up" | "down" | null;
+  userRank?: {
+    level: number;
+    title: string;
+  };
+  badges?: string[];
 }
 
 export type AdviceSentiment = {

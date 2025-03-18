@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Asset, fetchAssets } from '../services/api';
@@ -11,6 +10,7 @@ import SuperCategorySelector from '../components/SuperCategorySelector';
 import { useIsMobile } from '@/hooks/use-mobile';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
 import { useLanguage } from '@/contexts/LanguageContext';
+import GameSidebar from "@/components/gamification/GameSidebar";
 
 const Index: React.FC = () => {
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
@@ -105,76 +105,64 @@ const Index: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
+    <div className="container py-8">
       <AnnouncementBanner />
       
-      <main className="page-container animate-slide-up">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-          <div>
-            <span className="badge bg-primary/10 text-primary mb-2">Cryptocurrency</span>
-            <h1 className="page-header">{t('header.marketOverview')}</h1>
-            <p className="text-muted-foreground max-w-lg">
-              {t('header.marketDescription')}
-            </p>
-          </div>
+      <div className="mb-8">
+        <Header />
+      </div>
+      
+      <div className="mb-6">
+        <SearchBar onSearch={handleSearch} />
+        <div className="mt-4">
+          <SuperCategorySelector 
+            selectedCategory={selectedCategory} 
+            onCategoryChange={handleCategoryChange} 
+          />
         </div>
-        
-        {/* Search and Category Selection */}
-        <div className="mb-6">
-          <SearchBar onSearch={handleSearch} />
-          <div className="mt-4">
-            <SuperCategorySelector 
-              selectedCategory={selectedCategory} 
-              onCategoryChange={handleCategoryChange} 
-            />
-          </div>
+      </div>
+      
+      {isError && (
+        <div className="glass-card p-8 text-center my-8 border-destructive/20 border-2">
+          <h3 className="text-lg font-semibold text-destructive mb-2">Error Loading Data</h3>
+          <p className="text-muted-foreground mb-4">
+            {error instanceof Error ? error.message : 'Failed to fetch cryptocurrency data.'}
+          </p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="btn-primary bg-destructive hover:bg-destructive/90"
+          >
+            Retry
+          </button>
         </div>
-        
-        {isError && (
-          <div className="glass-card p-8 text-center my-8 border-destructive/20 border-2">
-            <h3 className="text-lg font-semibold text-destructive mb-2">Error Loading Data</h3>
-            <p className="text-muted-foreground mb-4">
-              {error instanceof Error ? error.message : 'Failed to fetch cryptocurrency data.'}
-            </p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="btn-primary bg-destructive hover:bg-destructive/90"
-            >
-              Retry
-            </button>
-          </div>
-        )}
-        
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Main Content Area for Assets */}
-          <div className="lg:col-span-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              {isLoading ? (
-                renderSkeletons()
-              ) : (
-                selectedAssets.map((asset, index) => (
-                  <AssetCard key={asset.id} asset={asset} rank={index} />
-                ))
-              )}
-            </div>
-            
-            {!isLoading && !isError && selectedAssets.length > 0 && (
-              <div className="flex justify-center mt-10">
-                <button onClick={handleLoadMore} className="btn-primary">
-                  {t('common.loadMore')}
-                </button>
-              </div>
+      )}
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {isLoading ? (
+              renderSkeletons()
+            ) : (
+              selectedAssets.map((asset, index) => (
+                <AssetCard key={asset.id} asset={asset} rank={index} />
+              ))
             )}
           </div>
           
-          {/* Popular Recommendations - Both Mobile and Desktop */}
-          <div className="lg:col-span-1 mb-6 lg:mb-0 order-first lg:order-last">
-            <PopularRecommendations />
-          </div>
+          {!isLoading && !isError && selectedAssets.length > 0 && (
+            <div className="flex justify-center mt-10">
+              <button onClick={handleLoadMore} className="btn-primary">
+                {t('common.loadMore')}
+              </button>
+            </div>
+          )}
         </div>
-      </main>
+        
+        <div className="space-y-6">
+          <PopularRecommendations />
+          <GameSidebar />
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +12,7 @@ import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 import AdminCategories from "./pages/admin/Categories";
 import AdminSuperCategories from "./pages/admin/SuperCategories";
+import Leaderboard from './pages/Leaderboard';
 import { useEffect } from "react";
 
 // Register service worker for PWA
@@ -39,7 +39,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => {
+function App() {
   useEffect(() => {
     registerServiceWorker();
   }, []);
@@ -59,6 +59,7 @@ const App = () => {
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/admin/categories" element={<AdminCategories />} />
                 <Route path="/admin/super-categories" element={<AdminSuperCategories />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
@@ -67,6 +68,6 @@ const App = () => {
       </LanguageProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;

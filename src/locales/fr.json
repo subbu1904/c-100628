@@ -41,5 +41,46 @@
   "geo": {
     "usingLocation": "Utilisation du contenu pour {{country}}",
     "changeLanguage": "Changer de Langue"
+  },
+  "gamification": {
+    "leaderboard": "Classement",
+    "rankings": "Rangs",
+    "rank": "Rang",
+    "user": "Utilisateur",
+    "points": "Points",
+    "successRate": "Taux de Réussite",
+    "followers": "Abonnés",
+    "badges": "Badges",
+    "moreBadges": "{{count}} de plus",
+    "yourProgress": "Votre Progression",
+    "loginToTrack": "Connectez-vous pour suivre votre progression",
+    "viewProfile": "Voir Profil",
+    "topPerformers": "Meilleurs Performeurs",
+    "viewFullLeaderboard": "Voir Classement Complet",
+    "currentLevel": "Niveau Actuel",
+    "levelProgress": "Progression de Niveau",
+    "maxLevelReached": "Vous avez atteint le niveau maximum !",
+    "comments": "Commentaires",
+    "commentsComingSoon": "Commentaires bientôt disponibles !",
+    "addComment": "Ajouter un commentaire...",
+    "post": "Publier",
+    "categories": {
+      "predictions": "Prédictions",
+      "followers": "Abonnés",
+      "contributions": "Contributions"
+    },
+    "periods": {
+      "weekly": "Hebdomadaire",
+      "monthly": "Mensuel",
+      "allTime": "Tout Temps"
+    },
+    "badges": {
+      "all": "Tous les Badges",
+      "prediction": "Prédiction",
+      "social": "Social",
+      "contribution": "Contribution",
+      "achievement": "Réalisation",
+      "unlocked": "Débloqué"
+    }
   }
 }

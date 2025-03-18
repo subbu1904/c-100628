@@ -8,6 +8,32 @@ import { ThumbsUp, ThumbsDown, MessageCircle } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import AuthDialog from '../auth/AuthDialog';
+import UserRankBadge from '../gamification/UserRankBadge';
+import { Badge } from '@/types/gamification';
+import UserBadges from '../gamification/UserBadges';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+// Mock badges for demonstration
+const mockBadges: Badge[] = [
+  {
+    id: '1',
+    name: 'Market Guru',
+    description: 'Provided accurate market predictions',
+    icon: 'trophy',
+    unlocked: true,
+    category: 'prediction',
+    level: 3
+  },
+  {
+    id: '2',
+    name: 'Helpful Advisor',
+    description: 'Received many upvotes for advice',
+    icon: 'award',
+    unlocked: true,
+    category: 'contribution',
+    level: 2
+  }
+];
 
 interface AdviceCardProps {
   advice: AdvicePost;
@@ -17,6 +43,7 @@ interface AdviceCardProps {
 const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [showComments, setShowComments] = useState(false);
   const [comment, setComment] = useState('');
   const [showAuthDialog, setShowAuthDialog] = useState(false);
@@ -76,12 +103,38 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
               {advice.userName.charAt(0).toUpperCase()}
             </div>
             <div>
-              <p className="font-medium">{advice.userName}</p>
-              <p className="text-xs text-muted-foreground">{formattedDate}</p>
+              <div className="flex items-center">
+                <p className="font-medium mr-2">{advice.userName}</p>
+                {advice.userRank && (
+                  <UserRankBadge 
+                    user={{ 
+                      id: advice.userId, 
+                      name: advice.userName, 
+                      email: '', 
+                      role: 'free',
+                      createdAt: '',
+                      membership: { type: 'free' },
+                      rank: advice.userRank
+                    }}
+                    size="sm"
+                  />
+                )}
+              </div>
+              <div className="flex items-center">
+                <p className="text-xs text-muted-foreground mr-2">{formattedDate}</p>
+                {advice.badges && advice.badges.length > 0 && (
+                  <UserBadges 
+                    badges={mockBadges}
+                    maxDisplay={2}
+                    showTooltips={true}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
           </div>
           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${recommendationColors[advice.recommendation]}`}>
-            {advice.recommendation.toUpperCase()}
+            {t(`recommendations.${advice.recommendation}`).toUpperCase()}
           </span>
         </div>
         
@@ -115,21 +168,21 @@ const AdviceCard: React.FC<AdviceCardProps> = ({ advice, onVote }) => {
             onClick={() => setShowComments(!showComments)}
           >
             <MessageCircle className="w-4 h-4 mr-1" />
-            Comments
+            {t('gamification.comments')}
           </Button>
         </div>
         
         {showComments && (
           <div className="mt-4 pt-4 border-t">
-            <p className="text-sm text-muted-foreground mb-2">Comments coming soon!</p>
+            <p className="text-sm text-muted-foreground mb-2">{t('gamification.commentsComingSoon')}</p>
             <div className="flex space-x-2">
               <Textarea 
-                placeholder="Add a comment..." 
+                placeholder={t('gamification.addComment')}
                 className="text-sm"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
               />
-              <Button onClick={handleComment}>Post</Button>
+              <Button onClick={handleComment}>{t('gamification.post')}</Button>
             </div>
           </div>
         )}
