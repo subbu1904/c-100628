@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { formatCurrency, formatPercentChange, getChangeColorClass, Asset } from '../services/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Users } from 'lucide-react';
 
 interface AssetCardProps {
@@ -22,6 +23,7 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset, rank }) => {
   } = asset;
   
   const { user } = useAuth();
+  const { t } = useLanguage();
   
   const formattedPrice = formatCurrency(priceUsd);
   const formattedChange = formatPercentChange(changePercent24Hr);
@@ -65,19 +67,19 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset, rank }) => {
       
       <div className="grid grid-cols-2 gap-4 mt-4">
         <div>
-          <span className="text-xs text-muted-foreground">Price</span>
+          <span className="text-xs text-muted-foreground">{t('asset.price')}</span>
           <p className="font-semibold">{formattedPrice}</p>
         </div>
         <div className="text-right">
-          <span className="text-xs text-muted-foreground">24h Change</span>
+          <span className="text-xs text-muted-foreground">{t('asset.change24h')}</span>
           <p className={`font-semibold ${changeColorClass}`}>{formattedChange}</p>
         </div>
         <div>
-          <span className="text-xs text-muted-foreground">Market Cap</span>
+          <span className="text-xs text-muted-foreground">{t('asset.marketCap')}</span>
           <p className="font-medium">{formattedMarketCap}</p>
         </div>
         <div className="text-right">
-          <span className="text-xs text-muted-foreground">Followers</span>
+          <span className="text-xs text-muted-foreground">{t('asset.followers')}</span>
           <div className="flex items-center justify-end gap-1">
             <Users className="h-3 w-3 text-muted-foreground" />
             <p className="font-medium">{followersCount ? followersCount.toLocaleString() : '0'}</p>

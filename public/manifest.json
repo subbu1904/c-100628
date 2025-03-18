@@ -7,6 +7,17 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#3B82F6",
+  "dir": "auto",
+  "lang": "en",
+  "orientation": "any",
+  "categories": ["finance", "cryptocurrency", "markets"],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ],
   "icons": [
     {
       "src": "favicon.ico",

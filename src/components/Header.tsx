@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import AuthDialog from "./auth/AuthDialog";
+import LanguageSelector from "./LanguageSelector";
 import { 
   User, 
   LogOut,
@@ -24,8 +26,9 @@ const Header: React.FC = () => {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
-  const isAdmin = user.profile?.role === 'admin';
+  const isAdmin = user?.profile?.role === 'admin';
 
   return (
     <header className="w-full py-6 px-4 md:px-8 border-b border-border/40 bg-white/80 backdrop-blur-md sticky top-0 z-10 animate-fade-in">
@@ -38,12 +41,14 @@ const Header: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-2">
+          <LanguageSelector />
+          
           {!isHome && (
             <Link 
               to="/" 
               className="text-sm font-medium px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
             >
-              Back to Assets
+              {t('common.back')}
             </Link>
           )}
           
@@ -53,7 +58,7 @@ const Header: React.FC = () => {
               <Link to="/messages">
                 <Button variant="outline" size="sm" className="hidden sm:flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" />
-                  Messages
+                  {t('common.messages')}
                 </Button>
               </Link>
               
@@ -62,7 +67,7 @@ const Header: React.FC = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="flex items-center gap-1">
                     <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">Dashboard</span>
+                    <span className="hidden sm:inline">{t('common.dashboard')}</span>
                     <ChevronDown className="h-3 w-3 opacity-70" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -70,7 +75,7 @@ const Header: React.FC = () => {
                   <DropdownMenuLabel>Account</DropdownMenuLabel>
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard" className="cursor-pointer">
-                      Dashboard
+                      {t('common.dashboard')}
                     </Link>
                   </DropdownMenuItem>
                   
@@ -100,7 +105,7 @@ const Header: React.FC = () => {
                 className="flex items-center gap-2"
               >
                 <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">{t('common.logout')}</span>
               </Button>
             </div>
           ) : (
@@ -110,7 +115,7 @@ const Header: React.FC = () => {
               className="flex items-center gap-2"
             >
               <User className="h-4 w-4" />
-              Login
+              {t('common.login')}
             </Button>
           )}
         </div>

@@ -1,0 +1,45 @@
+
+{
+  "common": {
+    "search": "Rechercher par nom, symbole...",
+    "loadMore": "Charger Plus d'Actifs",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "dashboard": "Tableau de Bord",
+    "messages": "Messages",
+    "back": "Retour aux Actifs"
+  },
+  "header": {
+    "marketOverview": "Aperçu du Marché",
+    "marketDescription": "Suivez les principales crypto-monnaies par capitalisation boursière. Cliquez sur n'importe quel actif pour des informations détaillées."
+  },
+  "asset": {
+    "price": "Prix",
+    "change24h": "Variation 24h",
+    "marketCap": "Cap. Marché",
+    "followers": "Abonnés"
+  },
+  "voice": {
+    "notSupported": "Votre navigateur ne prend pas en charge la reconnaissance vocale.",
+    "error": "Impossible de reconnaître la parole: {{error}}",
+    "listening": "Écoute en cours...",
+    "speakNow": "Parlez maintenant pour rechercher des actifs."
+  },
+  "recommendations": {
+    "title": "Recommandations Populaires",
+    "subtitle": "Conseils les plus votés de la communauté",
+    "buy": "acheter",
+    "sell": "vendre",
+    "hold": "conserver"
+  },
+  "languages": {
+    "en": "Anglais",
+    "es": "Espagnol",
+    "fr": "Français",
+    "hi": "Hindi"
+  },
+  "geo": {
+    "usingLocation": "Utilisation du contenu pour {{country}}",
+    "changeLanguage": "Changer de Langue"
+  }
+}

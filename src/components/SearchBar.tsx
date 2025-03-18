@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Search, Mic, X } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SearchBarProps {
   onSearch: (term: string) => void;
@@ -15,6 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [isListening, setIsListening] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { t, language } = useLanguage();
   
   // Voice recognition support check
   const [supportsVoiceSearch, setSupportsVoiceSearch] = useState(false);
@@ -45,7 +47,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     if (!supportsVoiceSearch) {
       toast({
         title: "Voice Search Not Supported",
-        description: "Your browser doesn't support voice recognition.",
+        description: t('voice.notSupported'),
         variant: "destructive"
       });
       return;
@@ -68,7 +70,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     
     const recognition = new SpeechRecognitionAPI();
     
-    recognition.lang = 'en-US';
+    // Set language based on current app language
+    const speechLanguageMap: Record<string, string> = {
+      'en': 'en-US',
+      'es': 'es-ES',
+      'fr': 'fr-FR',
+      'hi': 'hi-IN'
+    };
+    
+    recognition.lang = speechLanguageMap[language] || 'en-US';
     recognition.continuous = false;
     recognition.interimResults = false;
     
@@ -83,7 +93,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       console.error('Speech recognition error', event.error);
       toast({
         title: "Voice Search Error",
-        description: `Could not recognize speech: ${event.error}`,
+        description: t('voice.error', { error: event.error }),
         variant: "destructive"
       });
       setIsListening(false);
@@ -96,8 +106,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     recognition.start();
     
     toast({
-      title: "Listening...",
-      description: "Speak now to search for assets.",
+      title: t('voice.listening'),
+      description: t('voice.speakNow'),
     });
   };
   
@@ -107,7 +117,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
           type="text"
-          placeholder="Search by name, symbol..."
+          placeholder={t('common.search')}
           className="pl-10 pr-16"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

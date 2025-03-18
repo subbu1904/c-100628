@@ -10,6 +10,7 @@ import SearchBar from '../components/SearchBar';
 import SuperCategorySelector from '../components/SuperCategorySelector';
 import { useIsMobile } from '@/hooks/use-mobile';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index: React.FC = () => {
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
@@ -17,6 +18,7 @@ const Index: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   const { 
     data: assets,
@@ -112,9 +114,9 @@ const Index: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <div>
             <span className="badge bg-primary/10 text-primary mb-2">Cryptocurrency</span>
-            <h1 className="page-header">Market Overview</h1>
+            <h1 className="page-header">{t('header.marketOverview')}</h1>
             <p className="text-muted-foreground max-w-lg">
-              Track top cryptocurrencies by market capitalization. Click on any asset for detailed information.
+              {t('header.marketDescription')}
             </p>
           </div>
         </div>
@@ -161,7 +163,7 @@ const Index: React.FC = () => {
             {!isLoading && !isError && selectedAssets.length > 0 && (
               <div className="flex justify-center mt-10">
                 <button onClick={handleLoadMore} className="btn-primary">
-                  Load More Assets
+                  {t('common.loadMore')}
                 </button>
               </div>
             )}

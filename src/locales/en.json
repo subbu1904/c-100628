@@ -1,0 +1,45 @@
+
+{
+  "common": {
+    "search": "Search by name, symbol...",
+    "loadMore": "Load More Assets",
+    "login": "Login",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "messages": "Messages",
+    "back": "Back to Assets"
+  },
+  "header": {
+    "marketOverview": "Market Overview",
+    "marketDescription": "Track top cryptocurrencies by market capitalization. Click on any asset for detailed information."
+  },
+  "asset": {
+    "price": "Price",
+    "change24h": "24h Change",
+    "marketCap": "Market Cap",
+    "followers": "Followers"
+  },
+  "voice": {
+    "notSupported": "Your browser doesn't support voice recognition.",
+    "error": "Could not recognize speech: {{error}}",
+    "listening": "Listening...",
+    "speakNow": "Speak now to search for assets."
+  },
+  "recommendations": {
+    "title": "Popular Recommendations",
+    "subtitle": "Most upvoted community advice",
+    "buy": "buy",
+    "sell": "sell",
+    "hold": "hold"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "hi": "Hindi"
+  },
+  "geo": {
+    "usingLocation": "Using content for {{country}}",
+    "changeLanguage": "Change Language"
+  }
+}

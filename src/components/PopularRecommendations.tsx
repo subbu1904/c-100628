@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ThumbsUp, ThumbsDown, Pause, TrendingUp, MessageSquare } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Mock popular recommendations data
 const mockPopularRecommendations = [
@@ -87,11 +88,11 @@ const formatRelativeTime = (timestamp: string) => {
 // Get recommendation icon based on type
 const getRecommendationIcon = (recommendation: string) => {
   switch (recommendation) {
-    case 'buy':
+    case "buy":
       return <ThumbsUp className="text-green-500 w-4 h-4" />;
-    case 'sell':
+    case "sell":
       return <ThumbsDown className="text-red-500 w-4 h-4" />;
-    case 'hold':
+    case "hold":
       return <Pause className="text-blue-500 w-4 h-4" />;
     default:
       return null;
@@ -101,27 +102,29 @@ const getRecommendationIcon = (recommendation: string) => {
 // Get recommendation color based on type
 const getRecommendationColor = (recommendation: string) => {
   switch (recommendation) {
-    case 'buy':
-      return 'bg-green-500';
-    case 'sell':
-      return 'bg-red-500';
-    case 'hold':
-      return 'bg-blue-500';
+    case "buy":
+      return "bg-green-500";
+    case "sell":
+      return "bg-red-500";
+    case "hold":
+      return "bg-blue-500";
     default:
-      return 'bg-secondary';
+      return "bg-secondary";
   }
 };
 
 const PopularRecommendations: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
-    <Card>
+    <Card className="mt-4 lg:mt-0"> {/* Added margin top for mobile */}
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
-          <span>Popular Recommendations</span>
+          <span>{t('recommendations.title')}</span>
         </CardTitle>
         <CardDescription>
-          Most upvoted community advice
+          {t('recommendations.subtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4">
@@ -135,7 +138,7 @@ const PopularRecommendations: React.FC = () => {
                 </Link>
                 <Badge variant={rec.recommendation === 'buy' ? 'default' : rec.recommendation === 'sell' ? 'destructive' : 'secondary'} className="text-xs capitalize">
                   {getRecommendationIcon(rec.recommendation)}
-                  <span className="ml-1">{rec.recommendation}</span>
+                  <span className="ml-1">{t(`recommendations.${rec.recommendation}`)}</span>
                 </Badge>
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2 mb-1">
