@@ -1,13 +1,14 @@
 
 import { Pool } from 'pg';
 
-// Create a PostgreSQL connection pool
+// Create a PostgreSQL connection pool with default values
+// Note: In a production app, you would use environment variables securely
 const pool = new Pool({
-  user: process.env.POSTGRES_USER || 'postgres',
-  host: process.env.POSTGRES_HOST || 'localhost',
-  database: process.env.POSTGRES_DB || 'cryptoview',
-  password: process.env.POSTGRES_PASSWORD || 'postgres',
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
+  user: 'postgres',
+  host: 'localhost',
+  database: 'cryptoview',
+  password: 'postgres',
+  port: 5432,
 });
 
 // Test the connection
