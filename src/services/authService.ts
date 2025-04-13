@@ -1,6 +1,7 @@
 
 import { UserProfile } from "@/types/user";
-import { mockUsers } from "@/data/mockUsers";
+import { userRepository } from "@/repositories/userRepository";
+import * as bcrypt from 'bcryptjs';
 
 // Local storage key
 const USER_STORAGE_KEY = "cryptoUser";
@@ -32,12 +33,8 @@ export const authService = {
 
   // Login with email and password
   login: async (email: string, password: string): Promise<UserProfile | null> => {
-    // In a real app, this would be a server request
-    const foundUser = mockUsers.find(u => u.email === email);
-    if (foundUser) {
-      return foundUser;
-    }
-    return null;
+    // Authenticate against the database
+    return await userRepository.authenticateUser(email, password);
   },
 
   // Register new user
@@ -45,88 +42,58 @@ export const authService = {
     email: string, 
     password: string, 
     name: string
-  ): Promise<UserProfile> => {
-    // In a real app, this would create a user in the database
-    const newUser: UserProfile = {
-      id: Date.now().toString(),
-      email,
-      name,
-      role: "free",
-      createdAt: new Date().toISOString(),
-      membership: {
-        type: "free"
-      }
-    };
-    return newUser;
+  ): Promise<UserProfile | null> => {
+    // Create user in the database
+    return await userRepository.createUser(email, password, name);
   },
 
   // Login with OTP
   loginWithOtp: async (email: string, otp: string): Promise<UserProfile | null> => {
-    // Simulate OTP verification
+    // In a real app, verify OTP from database or cache
+    // For now, use mocked implementation
     if (otp === "123456") { // Mock OTP check
-      const foundUser = mockUsers.find(u => u.email === email) || {
-        id: Date.now().toString(),
+      const existingUser = await userRepository.getUserByEmail(email);
+      
+      if (existingUser) {
+        return existingUser;
+      }
+      
+      // Create new user if they don't exist
+      return await userRepository.createUser(
         email,
-        name: email.split("@")[0],
-        role: "free",
-        createdAt: new Date().toISOString(),
-        membership: {
-          type: "free"
-        }
-      };
-      return foundUser;
+        await bcrypt.hash(Math.random().toString(36), 10), // Random password
+        email.split("@")[0] // Use part of email as name
+      );
     }
     return null;
   },
 
   // Login with social provider
-  loginWithSocial: async (provider: "google" | "facebook"): Promise<UserProfile> => {
+  loginWithSocial: async (provider: "google" | "facebook"): Promise<UserProfile | null> {
     // In a real app, this would use OAuth
-    const mockSocialUser: UserProfile = {
-      id: Date.now().toString(),
-      email: `user_${Date.now()}@${provider}.com`,
-      name: `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
-      role: "free",
-      createdAt: new Date().toISOString(),
-      membership: {
-        type: "free"
-      }
-    };
-    return mockSocialUser;
+    // For now, create a mock user with the provider name
+    const email = `user_${Date.now()}@${provider}.com`;
+    return await userRepository.createUser(
+      email,
+      await bcrypt.hash(Math.random().toString(36), 10), // Random password
+      `${provider.charAt(0).toUpperCase() + provider.slice(1)} User` // Capitalized provider name
+    );
   },
 
   // Send OTP
   sendOtp: async (email: string): Promise<boolean> => {
-    // Simulate sending OTP
+    // In a real app, send OTP via email or SMS
     console.log(`OTP sent to ${email}: 123456`);
     return true;
   },
 
   // Upgrade to premium
-  upgradeToPermium: async (profile: UserProfile): Promise<UserProfile> => {
-    // In a real app, this would involve a payment process
-    const updatedProfile = {
-      ...profile,
-      role: "premium" as const,
-      membership: {
-        type: "premium" as const,
-        startDate: new Date().toISOString(),
-        endDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
-        autoRenew: true
-      }
-    };
-    return updatedProfile;
+  upgradeToPermium: async (profile: UserProfile): Promise<UserProfile | null> => {
+    return await userRepository.upgradeUserToPremium(profile.id);
   },
 
   // Downgrade to free
-  downgradeToFree: async (profile: UserProfile): Promise<UserProfile> => {
-    const updatedProfile = {
-      ...profile,
-      role: "free" as const,
-      membership: {
-        type: "free" as const
-      }
-    };
-    return updatedProfile;
+  downgradeToFree: async (profile: UserProfile): Promise<UserProfile | null> => {
+    return await userRepository.downgradeUserToFree(profile.id);
   }
 };
