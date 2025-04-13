@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -18,7 +18,6 @@ const CreateAdviceForm: React.FC<CreateAdviceFormProps> = ({
   assetName,
   onAdviceCreated 
 }) => {
-  const { toast } = useToast();
   const { user } = useAuth();
   const [content, setContent] = useState('');
   const [recommendation, setRecommendation] = useState<'buy' | 'sell' | 'hold'>('buy');
