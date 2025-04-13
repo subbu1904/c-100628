@@ -1,7 +1,7 @@
 
 import { UserProfile } from "@/types/user";
 import { userRepository } from "@/repositories/userRepository";
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';  // Changed from * as bcrypt
 
 // Local storage key
 const USER_STORAGE_KEY = "cryptoUser";
