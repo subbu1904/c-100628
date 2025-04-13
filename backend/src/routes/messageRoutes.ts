@@ -1,28 +1,17 @@
 
 import express from 'express';
+import { MessageController } from '../controllers/messageController';
 import { authenticateJWT } from '../middleware/auth';
 
 const router = express.Router();
+const messageController = new MessageController();
 
 // Protected routes (all message routes require authentication)
-router.get('/conversations', authenticateJWT, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.get('/conversations/:id', authenticateJWT, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.post('/', authenticateJWT, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.put('/read', authenticateJWT, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.post('/conversations', authenticateJWT, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
+router.get('/conversations', authenticateJWT, messageController.getUserConversations);
+router.get('/conversations/:id', authenticateJWT, messageController.getConversationById);
+router.get('/conversations/:conversationId/messages', authenticateJWT, messageController.getMessages);
+router.post('/', authenticateJWT, messageController.createMessage);
+router.put('/read', authenticateJWT, messageController.markAsRead);
+router.post('/conversations', authenticateJWT, messageController.createConversation);
 
 export { router as messageRoutes };

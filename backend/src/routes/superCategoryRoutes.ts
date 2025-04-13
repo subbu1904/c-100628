@@ -1,33 +1,19 @@
 
 import express from 'express';
+import { SuperCategoryController } from '../controllers/superCategoryController';
 import { authenticateJWT, requireAdmin } from '../middleware/auth';
 
 const router = express.Router();
+const superCategoryController = new SuperCategoryController();
 
 // Public routes
-router.get('/', (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.get('/:id', (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
+router.get('/', superCategoryController.getAll);
+router.get('/:id', superCategoryController.getById);
 
 // Admin routes
-router.post('/', authenticateJWT, requireAdmin, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.put('/:id', authenticateJWT, requireAdmin, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.delete('/:id', authenticateJWT, requireAdmin, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.put('/:id/toggle', authenticateJWT, requireAdmin, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
+router.post('/', authenticateJWT, requireAdmin, superCategoryController.create);
+router.put('/:id', authenticateJWT, requireAdmin, superCategoryController.update);
+router.delete('/:id', authenticateJWT, requireAdmin, superCategoryController.delete);
+router.put('/:id/toggle', authenticateJWT, requireAdmin, superCategoryController.toggleEnabled);
 
 export { router as superCategoryRoutes };

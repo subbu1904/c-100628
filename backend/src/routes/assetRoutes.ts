@@ -1,25 +1,18 @@
 
 import express from 'express';
+import { AssetController } from '../controllers/assetController';
 import { authenticateJWT } from '../middleware/auth';
 
 const router = express.Router();
+const assetController = new AssetController();
 
 // Public routes
-router.get('/', (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.get('/:id', (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
+router.get('/', assetController.getAll);
+router.get('/:id', assetController.getById);
 
 // Protected routes
-router.post('/favorite', authenticateJWT, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.delete('/favorite/:id', authenticateJWT, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
+router.post('/favorite', authenticateJWT, assetController.addToFavorites);
+router.delete('/favorite/:id', authenticateJWT, assetController.removeFromFavorites);
+router.get('/user/favorites', authenticateJWT, assetController.getUserFavorites);
 
 export { router as assetRoutes };
