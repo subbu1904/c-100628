@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import LoginForm from "./LoginForm";
+import LoginFormWrapper from "./LoginFormWrapper";
 import { toast } from "@/hooks/use-toast";
 
 interface AuthDialogProps {
@@ -56,7 +56,7 @@ const AuthDialog = ({ isOpen, onClose }: AuthDialogProps) => {
             </p>
           </div>
         ) : (
-          <LoginForm onLoginSuccess={handleLoginSuccess} />
+          <LoginFormWrapper onSuccess={handleLoginSuccess} />
         )}
       </DialogContent>
     </Dialog>
