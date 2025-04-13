@@ -1,7 +1,6 @@
-
 import { UserProfile } from "@/types/user";
 import { userRepository } from "@/repositories/userRepository";
-import bcrypt from 'bcryptjs';  // Changed from * as bcrypt
+import bcrypt from 'bcryptjs';  // Correct import for ESM modules
 
 // Local storage key
 const USER_STORAGE_KEY = "cryptoUser";
