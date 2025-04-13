@@ -1,7 +1,9 @@
 
+import { DatabaseClient, QueryResult } from "@/types/database";
+
 // Mock database implementation for browser environments
-class MockPool {
-  query(text, params) {
+class MockPool implements DatabaseClient {
+  query<T = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
     console.log('MOCK DB: Query executed:', text, params);
     return Promise.resolve({ rows: [], rowCount: 0 });
   }
@@ -9,7 +11,7 @@ class MockPool {
   connect() {
     console.log('MOCK DB: Connection requested');
     return Promise.resolve({
-      query: (text, params) => {
+      query: <T = any>(text: string, params?: any[]): Promise<QueryResult<T>> => {
         console.log('MOCK DB: Client query executed:', text, params);
         return Promise.resolve({ rows: [], rowCount: 0 });
       },
