@@ -1,9 +1,14 @@
+
 import { UserProfile } from "@/types/user";
 import { userRepository } from "@/repositories/userRepository";
-import bcrypt from 'bcryptjs';  // Correct import for ESM modules
 
 // Local storage key
 const USER_STORAGE_KEY = "cryptoUser";
+
+// Utility function to generate a random string (replacing bcrypt for client-side)
+const generateRandomString = () => {
+  return Math.random().toString(36).substring(2, 15);
+};
 
 export const authService = {
   // Get user from local storage
@@ -60,7 +65,7 @@ export const authService = {
       // Create new user if they don't exist
       return await userRepository.createUser(
         email,
-        await bcrypt.hash(Math.random().toString(36), 10), // Random password
+        generateRandomString(), // Use our simple random string generator instead of bcrypt
         email.split("@")[0] // Use part of email as name
       );
     }
@@ -74,7 +79,7 @@ export const authService = {
     const email = `user_${Date.now()}@${provider}.com`;
     return await userRepository.createUser(
       email,
-      await bcrypt.hash(Math.random().toString(36), 10), // Random password
+      generateRandomString(), // Use our simple random string generator instead of bcrypt
       `${provider.charAt(0).toUpperCase() + provider.slice(1)} User` // Capitalized provider name
     );
   },
