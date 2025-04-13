@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === 'development' &&
     componentTagger(),
-    // Add node polyfills with full configuration
+    // Enhanced node polyfills configuration
     nodePolyfills({
       // Whether to polyfill specific globals
       globals: {
@@ -25,6 +25,8 @@ export default defineConfig(({ mode }) => ({
       },
       // Whether to polyfill specific modules
       protocolImports: true,
+      // Explicitly include all Node.js util modules
+      include: ['util', 'stream', 'events', 'crypto', 'path', 'buffer', 'querystring', 'url', 'string_decoder']
     }),
   ].filter(Boolean),
   resolve: {

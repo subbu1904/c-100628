@@ -1,50 +1,29 @@
 
-import { Pool } from 'pg';
+// Mock database implementation for browser environments
+class MockPool {
+  query(text, params) {
+    console.log('MOCK DB: Query executed:', text, params);
+    return Promise.resolve({ rows: [], rowCount: 0 });
+  }
 
-// Create a mock pool for browser environments
-const createMockPool = () => {
-  const mockPool = {
-    query: (text, params) => {
-      console.log('Browser environment detected, database operations are mocked');
-      console.log('Query that would be executed:', text, params);
-      return Promise.resolve({ rows: [], rowCount: 0 });
-    },
-    connect: () => {
-      console.log('Browser environment detected, connection is mocked');
-      return Promise.resolve({
-        query: () => Promise.resolve({ rows: [], rowCount: 0 }),
-        release: () => {},
-      });
-    },
-  };
-  return mockPool;
-};
-
-// Determine if we're in a browser environment
-const isBrowser = typeof window !== 'undefined';
-
-// Create either a real pool or a mock pool based on environment
-const pool = isBrowser 
-  ? createMockPool()
-  : new Pool({
-      user: 'postgres',
-      host: 'localhost',
-      database: 'cryptoview',
-      password: 'postgres',
-      port: 5432,
+  connect() {
+    console.log('MOCK DB: Connection requested');
+    return Promise.resolve({
+      query: (text, params) => {
+        console.log('MOCK DB: Client query executed:', text, params);
+        return Promise.resolve({ rows: [], rowCount: 0 });
+      },
+      release: () => {
+        console.log('MOCK DB: Client released');
+      }
     });
-
-// Log connection status
-if (!isBrowser) {
-  pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
-      console.error('Database connection error:', err);
-    } else {
-      console.log('Connected to PostgreSQL database at:', res.rows[0].now);
-    }
-  });
-} else {
-  console.log('Browser environment: PostgreSQL operations will be mocked');
+  }
 }
+
+// In browser environments we use a mock implementation
+// In Node.js environments we would use the real pg Pool
+const pool = new MockPool();
+
+console.log('Using mock database implementation for browser environment');
 
 export default pool;
