@@ -69,7 +69,7 @@ export const authService = {
   },
 
   // Login with social provider
-  loginWithSocial: async (provider: "google" | "facebook"): Promise<UserProfile | null> {
+  loginWithSocial: async (provider: "google" | "facebook"): Promise<UserProfile | null> => {
     // In a real app, this would use OAuth
     // For now, create a mock user with the provider name
     const email = `user_${Date.now()}@${provider}.com`;
