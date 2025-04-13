@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import LoginForm from "./LoginForm";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -8,16 +8,17 @@ interface LoginFormWrapperProps {
 }
 
 const LoginFormWrapper: React.FC<LoginFormWrapperProps> = ({ onSuccess }) => {
-  const { login, loginWithOtp, loginWithSocial } = useAuth();
+  const { user } = useAuth();
   
-  const handleLoginSuccess = () => {
-    onSuccess();
-  };
+  // Use an effect to detect when the user becomes authenticated
+  useEffect(() => {
+    if (user && user.isAuthenticated) {
+      onSuccess();
+    }
+  }, [user, onSuccess]);
   
   return (
-    <LoginForm 
-      onLoginSuccess={handleLoginSuccess} 
-    />
+    <LoginForm />
   );
 };
 
