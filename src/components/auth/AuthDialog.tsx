@@ -56,7 +56,7 @@ const AuthDialog = ({ isOpen, onClose }: AuthDialogProps) => {
             </p>
           </div>
         ) : (
-          <LoginForm onSuccess={handleLoginSuccess} />
+          <LoginForm onLoginSuccess={handleLoginSuccess} />
         )}
       </DialogContent>
     </Dialog>
