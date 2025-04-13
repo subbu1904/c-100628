@@ -15,9 +15,15 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === 'development' &&
     componentTagger(),
-    // Add node polyfills for browser compatibility
+    // Add node polyfills with full configuration
     nodePolyfills({
-      // Whether to polyfill `node:` protocol imports
+      // Whether to polyfill specific globals
+      globals: {
+        Buffer: true,
+        global: true,
+        process: true,
+      },
+      // Whether to polyfill specific modules
       protocolImports: true,
     }),
   ].filter(Boolean),
@@ -27,13 +33,22 @@ export default defineConfig(({ mode }) => ({
     },
   },
   define: {
-    // Define process.env for pg library
+    // Define process.env for library compatibility
     "process.env": {
       POSTGRES_USER: 'postgres',
       POSTGRES_HOST: 'localhost',
       POSTGRES_DB: 'cryptoview',
       POSTGRES_PASSWORD: 'postgres',
       POSTGRES_PORT: '5432',
+      NODE_ENV: mode,
+    },
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      // Node.js global to browser globalThis
+      define: {
+        global: 'globalThis',
+      },
     },
   },
 }));
