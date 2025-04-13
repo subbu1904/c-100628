@@ -1,4 +1,5 @@
 
+import React, { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,7 +15,6 @@ import NotFound from "./pages/NotFound";
 import AdminCategories from "./pages/admin/Categories";
 import AdminSuperCategories from "./pages/admin/SuperCategories";
 import Leaderboard from './pages/Leaderboard';
-import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 
 // Enhanced service worker registration with update notification
