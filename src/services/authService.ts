@@ -15,14 +15,11 @@ const MOCK_USER: UserProfile = {
   id: '1',
   email: 'demo@example.com',
   name: 'Demo User',
+  role: 'free', // Changed from 'user' to 'free' to match UserRole type
+  avatarUrl: '/placeholder.svg',
   createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  role: 'user',
-  isPremium: false,
-  preferences: {
-    theme: 'light',
-    currency: 'USD',
-    notifications: true
+  membership: {
+    type: 'free'
   }
 };
 
@@ -85,7 +82,11 @@ export const authService = {
       // In development, return mock user
       if (process.env.NODE_ENV === 'development') {
         console.log('Using mock user for development');
-        return { ...MOCK_USER, email, name };
+        return { 
+          ...MOCK_USER, 
+          email, 
+          name 
+        };
       }
       return null;
     }
@@ -98,7 +99,11 @@ export const authService = {
       // For now, use mocked implementation
       if (otp === "123456") { // Mock OTP check
         // For browser environment, create a mock user
-        return { ...MOCK_USER, email, name: email.split("@")[0] };
+        return { 
+          ...MOCK_USER, 
+          email, 
+          name: email.split("@")[0] 
+        };
       }
       return null;
     } catch (error) {
@@ -138,7 +143,16 @@ export const authService = {
   upgradeToPermium: async (profile: UserProfile): Promise<UserProfile | null> => {
     try {
       // For browser environment, create a mock premium user
-      return { ...profile, isPremium: true };
+      return { 
+        ...profile, 
+        membership: {
+          ...profile.membership,
+          type: 'premium',
+          startDate: new Date().toISOString(),
+          endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+          autoRenew: true
+        }
+      };
     } catch (error) {
       console.error("Upgrade to premium error:", error);
       return null;
@@ -149,7 +163,12 @@ export const authService = {
   downgradeToFree: async (profile: UserProfile): Promise<UserProfile | null> => {
     try {
       // For browser environment, create a mock free user
-      return { ...profile, isPremium: false };
+      return { 
+        ...profile, 
+        membership: {
+          type: 'free'
+        }
+      };
     } catch (error) {
       console.error("Downgrade to free error:", error);
       return null;
