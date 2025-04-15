@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Asset, fetchAssets } from '../services/api';
 import AssetCard from '../components/AssetCard';
@@ -13,11 +13,11 @@ import AnnouncementBanner from '@/components/AnnouncementBanner';
 import { useLanguage } from '@/contexts/LanguageContext';
 import GameSidebar from "@/components/gamification/GameSidebar";
 
-const Index: React.FC = () => {
-  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
-  const [limit, setLimit] = useState(20);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+const Index = () => {
+  const [selectedAssets, setSelectedAssets] = React.useState<Asset[]>([]);
+  const [limit, setLimit] = React.useState(20);
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [selectedCategory, setSelectedCategory] = React.useState('all');
   const isMobile = useIsMobile();
   const { t } = useLanguage();
   
@@ -31,7 +31,7 @@ const Index: React.FC = () => {
     queryFn: () => fetchAssets(limit),
   });
   
-  useEffect(() => {
+  React.useEffect(() => {
     if (assets) {
       let filtered = [...assets];
       
