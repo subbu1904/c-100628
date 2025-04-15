@@ -45,9 +45,10 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  const [language, setLanguageState] = useState('en');
-  const [detectedCountry, setDetectedCountry] = useState('');
-  const [countryCode, setCountryCode] = useState('');
+  // Make sure React is properly used for hooks
+  const [language, setLanguageState] = React.useState('en');
+  const [detectedCountry, setDetectedCountry] = React.useState('');
+  const [countryCode, setCountryCode] = React.useState('');
   const { t } = useTranslation();
 
   // Set country and potentially update language
@@ -97,7 +98,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   };
 
   // Load saved language preference
-  useEffect(() => {
+  React.useEffect(() => {
     const savedLanguage = localStorage.getItem('userLanguage');
     if (savedLanguage) {
       setLanguage(savedLanguage);
