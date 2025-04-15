@@ -15,6 +15,7 @@ import SuperAdminDashboard from '@/pages/admin/SuperAdminDashboard';
 import NotFound from '@/pages/NotFound';
 import './App.css';
 import { useLanguage } from './contexts/LanguageContext';
+import Header from './components/Header';
 
 function App() {
   const { loadLanguage } = useLanguage();

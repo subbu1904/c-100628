@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
@@ -10,18 +9,51 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import UsersManagement from '@/components/admin/UsersManagement';
 import MembershipsManagement from '@/components/admin/MembershipsManagement';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import Header from '@/components/Header';
 
 const SuperAdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t } = useLanguage();
   
-  // Check if user has admin access
-  React.useEffect(() => {
-    if (!user.isAuthenticated || user.profile?.role !== 'admin') {
+  // Check if user has admin access - added a null check for user.profile
+  useEffect(() => {
+    if (!user || !user.isAuthenticated || !user.profile || user.profile.role !== 'admin') {
       navigate('/');
     }
   }, [user, navigate]);
+
+  // Return a loading state while checking auth
+  if (!user || user.loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Return access denied if not admin
+  if (!user.isAuthenticated || !user.profile || user.profile.role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container py-8">
+          <div className="flex flex-col items-center justify-center h-[50vh] text-center">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+              <Settings className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
+            <p className="text-muted-foreground mb-6">
+              You don't have permission to access the admin dashboard.
+            </p>
+            <Button onClick={() => navigate('/')}>
+              Go Back to Home
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   const menuItems = [
     { icon: <Users className="h-5 w-5" />, label: t('admin.users'), value: 'users' },
