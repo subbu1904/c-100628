@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Asset, fetchAssets } from '../services/api';
@@ -159,8 +160,8 @@ const Index: React.FC = () => {
         </div>
         
         <div className="space-y-6">
-          <PopularRecommendations />
           <GameSidebar />
+          <PopularRecommendations />
         </div>
       </div>
     </div>
