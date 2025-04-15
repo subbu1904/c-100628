@@ -1,4 +1,5 @@
 
+import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { Toaster } from '@/components/ui/toaster';
@@ -14,7 +15,6 @@ import SuperAdminDashboard from '@/pages/admin/SuperAdminDashboard';
 import NotFound from '@/pages/NotFound';
 import './App.css';
 import { useLanguage } from './contexts/LanguageContext';
-import { useEffect, useState } from 'react';
 
 function App() {
   const { loadLanguage } = useLanguage();
