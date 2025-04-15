@@ -1,8 +1,9 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import LoginFormWrapper from "./LoginFormWrapper";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface AuthDialogProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface AuthDialogProps {
 }
 
 const AuthDialog = ({ isOpen, onClose }: AuthDialogProps) => {
+  const navigate = useNavigate();
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   
   const handleLoginSuccess = () => {
@@ -23,6 +25,7 @@ const AuthDialog = ({ isOpen, onClose }: AuthDialogProps) => {
     setTimeout(() => {
       onClose();
       setShowSuccessMessage(false);
+      navigate('/dashboard');
     }, 1500);
   };
   

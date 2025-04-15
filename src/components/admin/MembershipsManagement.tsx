@@ -1,298 +1,215 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { useLanguage } from '@/contexts/LanguageContext';
 import { Badge } from "@/components/ui/badge";
-import { Crown, CreditCard, Users, Calendar, DollarSign, Edit, Tag } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Edit, Trash, Plus, Search, CheckCircle } from 'lucide-react';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
 
-// Mock membership plans data
+// Sample membership plans
 const membershipPlans = [
   {
     id: 'plan1',
     name: 'Basic',
     price: 0,
-    billingCycle: 'monthly',
-    features: ['Basic access', 'Limited predictions', '5 favorites'],
-    active: true
+    billingCycle: 'free',
+    features: ['Limited asset tracking', 'Basic predictions', 'Standard support'],
+    status: 'active',
+    usersCount: 78
   },
   {
     id: 'plan2',
     name: 'Premium',
     price: 9.99,
     billingCycle: 'monthly',
-    features: ['Full access', 'Unlimited predictions', 'Expert insights', 'Priority support'],
-    active: true
+    features: ['Unlimited asset tracking', 'Advanced predictions', 'Priority support', 'Expert insights'],
+    status: 'active',
+    usersCount: 45
   },
   {
     id: 'plan3',
-    name: 'Premium Annual',
-    price: 99.99,
-    billingCycle: 'yearly',
-    features: ['Full access', 'Unlimited predictions', 'Expert insights', 'Priority support', '2 months free'],
-    active: true
+    name: 'Pro',
+    price: 19.99,
+    billingCycle: 'monthly',
+    features: ['Everything in Premium', 'API access', 'Custom alerts', '24/7 phone support', 'White-label options'],
+    status: 'active',
+    usersCount: 23
   },
   {
     id: 'plan4',
     name: 'Enterprise',
-    price: 29.99,
+    price: 99.99,
     billingCycle: 'monthly',
-    features: ['Everything in Premium', 'API access', 'Dedicated account manager', 'Custom features'],
-    active: false
-  }
-];
-
-// Mock subscribers data
-const mockSubscribers = [
-  {
-    id: 'sub1',
-    userName: 'John Doe',
-    userEmail: 'john@example.com',
-    plan: 'Premium',
-    startDate: '2025-01-15T10:30:00Z',
-    endDate: '2025-02-15T10:30:00Z',
-    autoRenew: true,
-    status: 'active'
-  },
-  {
-    id: 'sub2',
-    userName: 'Jane Smith',
-    userEmail: 'jane@example.com',
-    plan: 'Premium Annual',
-    startDate: '2025-01-10T14:45:00Z',
-    endDate: '2026-01-10T14:45:00Z',
-    autoRenew: true,
-    status: 'active'
-  },
-  {
-    id: 'sub3',
-    userName: 'Robert Johnson',
-    userEmail: 'robert@example.com',
-    plan: 'Premium',
-    startDate: '2024-12-20T09:15:00Z',
-    endDate: '2025-01-20T09:15:00Z',
-    autoRenew: false,
-    status: 'expiring'
+    features: ['Everything in Pro', 'Dedicated account manager', 'Custom integrations', 'Team access'],
+    status: 'inactive',
+    usersCount: 12
   }
 ];
 
 const MembershipsManagement: React.FC = () => {
   const { t } = useLanguage();
-  const [plans, setPlans] = useState(membershipPlans);
-  const [subscribers, setSubscribers] = useState(mockSubscribers);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    }).format(date);
+  const { toast } = useToast();
+  const [searchTerm, setSearchTerm] = React.useState('');
+  
+  // Filter plans based on search term
+  const filteredPlans = membershipPlans.filter(plan => 
+    plan.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  const handleDeletePlan = (planId: string) => {
+    toast({
+      title: t('admin.planDeleted'),
+      description: t('admin.planDeletedDescription'),
+    });
   };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
+  
+  const handleStatusChange = (planId: string) => {
+    toast({
+      title: t('admin.planStatusChanged'),
+      description: t('admin.planStatusChangedDescription'),
+    });
   };
-
-  const togglePlanStatus = (planId: string) => {
-    setPlans(plans.map(plan => 
-      plan.id === planId ? { ...plan, active: !plan.active } : plan
-    ));
+  
+  const formatPrice = (price: number, cycle: string) => {
+    if (cycle === 'free') return t('admin.free');
+    return `$${price} / ${t(`admin.${cycle}`)}`;
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">{t('admin.membershipPlans')}</h2>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>
-                <Tag className="mr-2 h-4 w-4" />
-                {t('admin.addPlan')}
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">{t('admin.membershipPlans')}</h2>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              {t('admin.addPlan')}
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('admin.createNewPlan')}</DialogTitle>
+              <DialogDescription>
+                {t('admin.createPlanDescription')}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <p>{t('admin.planFormDescription')}</p>
+              {/* Plan form would go here */}
+            </div>
+            <DialogFooter>
+              <Button type="submit" onClick={() => {
+                toast({
+                  title: t('admin.planCreated'),
+                  description: t('admin.planCreatedDescription'),
+                });
+              }}>
+                {t('admin.createPlan')}
               </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{t('admin.createMembershipPlan')}</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <p>{t('admin.membershipPlanFormDescription')}</p>
-                {/* Add plan form would go here */}
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {plans.map((plan) => (
-            <Card key={plan.id} className={`${!plan.active ? 'opacity-70' : ''}`}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="flex items-center">
-                      {plan.name === 'Premium' || plan.name === 'Premium Annual' ? 
-                        <Crown className="h-5 w-5 mr-2 text-amber-500" /> : 
-                        <Tag className="h-5 w-5 mr-2" />
-                      }
-                      {plan.name}
-                    </CardTitle>
-                    <CardDescription>{plan.billingCycle}</CardDescription>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+      
+      <div className="flex items-center space-x-2">
+        <Search className="w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder={t('admin.searchPlans')}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="max-w-sm"
+        />
+      </div>
+      
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.planName')}</TableHead>
+              <TableHead>{t('admin.price')}</TableHead>
+              <TableHead>{t('admin.features')}</TableHead>
+              <TableHead>{t('admin.usersCount')}</TableHead>
+              <TableHead>{t('admin.status')}</TableHead>
+              <TableHead className="text-right">{t('admin.actions')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredPlans.map((plan) => (
+              <TableRow key={plan.id}>
+                <TableCell className="font-medium">{plan.name}</TableCell>
+                <TableCell>{formatPrice(plan.price, plan.billingCycle)}</TableCell>
+                <TableCell>
+                  <ul className="list-disc list-inside text-sm">
+                    {plan.features.slice(0, 2).map((feature, index) => (
+                      <li key={index} className="text-muted-foreground">
+                        {feature}
+                      </li>
+                    ))}
+                    {plan.features.length > 2 && (
+                      <li className="text-muted-foreground">
+                        +{plan.features.length - 2} {t('admin.more')}
+                      </li>
+                    )}
+                  </ul>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center">
+                    <span className="font-medium">{plan.usersCount}</span>
+                    <span className="ml-1 text-muted-foreground text-xs">
+                      {t('admin.users')}
+                    </span>
                   </div>
-                  <Badge variant={plan.active ? 'default' : 'secondary'}>
-                    {plan.active ? t('admin.active') : t('admin.inactive')}
+                </TableCell>
+                <TableCell>
+                  <Badge variant={plan.status === 'active' ? 'default' : 'secondary'}>
+                    {plan.status === 'active' ? 
+                      t('admin.active') : 
+                      t('admin.inactive')
+                    }
                   </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold mb-4 flex items-center">
-                  <DollarSign className="h-6 w-6" />
-                  {plan.price === 0 ? 'Free' : plan.price}
-                  <span className="text-sm text-muted-foreground ml-1">
-                    {plan.price > 0 && `/${plan.billingCycle === 'monthly' ? 'mo' : 'yr'}`}
-                  </span>
-                </div>
-                <ul className="space-y-2">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center text-sm">
-                      <div className="w-1 h-1 rounded-full bg-primary mr-2"></div>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" size="sm">
-                  <Edit className="h-4 w-4 mr-2" />
-                  {t('admin.edit')}
-                </Button>
-                <Button 
-                  variant={plan.active ? "secondary" : "default"} 
-                  size="sm"
-                  onClick={() => togglePlanStatus(plan.id)}
-                >
-                  {plan.active ? t('admin.deactivate') : t('admin.activate')}
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </div>
-      
-      <div>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">{t('admin.currentSubscribers')}</h2>
-        </div>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center">
-              <Users className="w-5 h-5 mr-2 text-primary" />
-              {t('admin.subscribersList')}
-            </CardTitle>
-            <CardDescription>{t('admin.subscribersDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('admin.subscriber')}</TableHead>
-                  <TableHead>{t('admin.plan')}</TableHead>
-                  <TableHead>{t('admin.startDate')}</TableHead>
-                  <TableHead>{t('admin.endDate')}</TableHead>
-                  <TableHead>{t('admin.autoRenew')}</TableHead>
-                  <TableHead>{t('admin.status')}</TableHead>
-                  <TableHead className="text-right">{t('admin.actions')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {subscribers.map((subscriber) => (
-                  <TableRow key={subscriber.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{subscriber.userName}</div>
-                        <div className="text-sm text-muted-foreground">{subscriber.userEmail}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="font-medium">
-                        {subscriber.plan}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{formatDate(subscriber.startDate)}</TableCell>
-                    <TableCell>{formatDate(subscriber.endDate)}</TableCell>
-                    <TableCell>
-                      <Badge variant={subscriber.autoRenew ? "default" : "outline"}>
-                        {subscriber.autoRenew ? t('admin.enabled') : t('admin.disabled')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={subscriber.status === 'active' ? "success" : "warning"}>
-                        {subscriber.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">
-                        <CreditCard className="h-4 w-4 mr-2" />
-                        {t('admin.manage')}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center">
-              <Crown className="w-5 h-5 mr-2 text-primary" />
-              {t('admin.subscriptionStats')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">45</div>
-            <div className="text-sm text-muted-foreground">
-              {t('admin.totalActiveSubscriptions')}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center">
-              <Calendar className="w-5 h-5 mr-2 text-primary" />
-              {t('admin.renewals')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">12</div>
-            <div className="text-sm text-muted-foreground">
-              {t('admin.upcomingRenewals')}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center">
-              <DollarSign className="w-5 h-5 mr-2 text-primary" />
-              {t('admin.revenue')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">$1,249.99</div>
-            <div className="text-sm text-muted-foreground">
-              {t('admin.monthlyRevenue')}
-            </div>
-          </CardContent>
-        </Card>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleStatusChange(plan.id)}
+                      title={plan.status === 'active' ? t('admin.deactivate') : t('admin.activate')}
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      title={t('admin.edit')}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDeletePlan(plan.id)}
+                      title={t('admin.delete')}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+
 import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { Toaster } from '@/components/ui/toaster';
@@ -13,10 +14,11 @@ import SuperAdminDashboard from '@/pages/admin/SuperAdminDashboard';
 import NotFound from '@/pages/NotFound';
 import './App.css';
 import { useLanguage } from './contexts/LanguageContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
   const { loadLanguage } = useLanguage();
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   useEffect(() => {
     loadLanguage();
@@ -28,7 +30,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/asset/:id" element={<AssetDetail />} />
-          <Route path="/login" element={<AuthDialog />} />
+          <Route path="/login" element={
+            <div>
+              <AuthDialog isOpen={true} onClose={() => setIsAuthOpen(false)} />
+            </div>
+          } />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/messages" element={<Messages />} />
